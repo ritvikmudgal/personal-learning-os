@@ -1,0 +1,36 @@
+# Personal Learning OS — .gitignore
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+backend/.venv/
+backend/data/
+*.db
+
+# --- Node ---
+node_modules/
+frontend/node_modules/
+
+# --- Rust/Tauri ---
+frontend/src-tauri/target/
+
+# --- Environment ---
+.env
+!.env.example
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log

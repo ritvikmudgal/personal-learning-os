@@ -1,0 +1,19 @@
+# Web framework
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+
+# Database
+sqlalchemy[asyncio]==2.0.41
+aiosqlite==0.21.0
+alembic==1.16.1
+
+# Configuration
+pydantic-settings==2.9.1
+
+# HTTP client (for Ollama communication)
+httpx==0.28.1
+
+# Testing
+pytest==8.4.1
+pytest-asyncio==1.0.0
+httpx==0.28.1
