@@ -52,6 +52,17 @@ class Settings(BaseSettings):
     cloud_llm_model: Optional[str] = None
     cloud_llm_base_url: Optional[str] = None
 
+    # --- Ingestion & Materials ---
+    materials_dir: Path = DATA_DIR / "materials"
+    max_upload_size_mb: int = 100
+    chunk_size_chars: int = 2000
+    chunk_overlap_chars: int = 400
+
+    # --- Embedding Provider ---
+    embedding_provider: str = "ollama"  # "ollama"
+    embedding_model: str = "nomic-embed-text"
+    embedding_dimension: int = 768
+
     # --- Logging ---
     log_level: str = "INFO"
 

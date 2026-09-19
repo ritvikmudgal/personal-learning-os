@@ -13,7 +13,10 @@ from app.db.models import (
     LearningEvent,
     AssessmentRecord,
     Misconception,
-    MaterialMetadata,
+    Material,
+    DocumentChunk,
+    MaterialConcept,
+    IngestionStatus,
     RelationshipType,
     EventType,
     AssessmentType,
@@ -156,21 +159,39 @@ async def test_misconception(test_session):
 
 
 @pytest.mark.asyncio
-async def test_material_metadata(test_session):
-    """Test recording material metadata."""
+async def test_material_models(test_session):
+    """Test recording material and document chunk models."""
     learner = LearnerProfile(name="Test User")
     test_session.add(learner)
     await test_session.flush()
 
-    material = MaterialMetadata(
+    material = Material(
         learner_id=learner.id,
         title="Linear Algebra Textbook",
-        content_type="application/pdf",
+        original_filename="linear_algebra.pdf",
+        file_path="/data/materials/linear_algebra.pdf",
+        file_type="pdf",
         file_size_bytes=1024000,
-        associated_concept_ids=[1, 2, 3],
+        mime_type="application/pdf",
+        ingestion_status=IngestionStatus.COMPLETED,
+        total_chunks=1,
     )
     test_session.add(material)
     await test_session.flush()
 
+    chunk = DocumentChunk(
+        material_id=material.id,
+        chunk_index=0,
+        content="Vector spaces and linear transformations.",
+        clean_content="Vector spaces and linear transformations.",
+        start_char=0,
+        end_char=41,
+        page_number=1,
+        token_count=10,
+    )
+    test_session.add(chunk)
+    await test_session.flush()
+
     assert material.title == "Linear Algebra Textbook"
-    assert material.associated_concept_ids == [1, 2, 3]
+    assert material.ingestion_status == IngestionStatus.COMPLETED
+    assert chunk.content.startswith("Vector spaces")

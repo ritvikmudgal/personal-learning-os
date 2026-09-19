@@ -16,83 +16,147 @@ const SAMPLE_NODES: ConceptNode[] = [
   { id: "graph_traversal", title: "Graph Traversal (DFS/BFS)", category: "Algorithms", mastery: 76, prereqs: ["data_structs"] },
 ];
 
+const getMasteryColor = (mastery: number) => {
+  if (mastery >= 80) return "var(--accent-moss)";
+  if (mastery >= 60) return "var(--accent-amber)";
+  if (mastery >= 40) return "var(--accent-sky)";
+  return "var(--accent-coral)";
+};
+
+const getMasteryLabel = (mastery: number) => {
+  if (mastery >= 80) return "Strong";
+  if (mastery >= 60) return "Growing";
+  if (mastery >= 40) return "Developing";
+  return "Needs attention";
+};
+
 export const KnowledgeGraphView: React.FC = () => {
   const [traversalMode, setTraversalMode] = useState<"dfs" | "bfs">("dfs");
   const [selectedNode, setSelectedNode] = useState<ConceptNode>(SAMPLE_NODES[0]);
 
   return (
-    <div className="space-y-4">
-      {/* Engine Controls Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded pixel-panel gap-3 text-xs font-pixel-mono">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-300">Traversal Algorithm:</span>
-          <div className="flex gap-1">
-            <button
-              onClick={() => setTraversalMode("dfs")}
-              className={`px-2.5 py-1 rounded font-pixel-heading text-xs ${
-                traversalMode === "dfs"
-                  ? "bg-emerald-700 text-white"
-                  : "bg-slate-800 text-slate-400"
-              }`}
-            >
-              DFS (Depth-First)
-            </button>
-            <button
-              onClick={() => setTraversalMode("bfs")}
-              className={`px-2.5 py-1 rounded font-pixel-heading text-xs ${
-                traversalMode === "bfs"
-                  ? "bg-emerald-700 text-white"
-                  : "bg-slate-800 text-slate-400"
-              }`}
-            >
-              BFS (Breadth-First)
-            </button>
+    <div className="space-y-5">
+      {/* Controls Bar */}
+      <div
+        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg gap-3"
+        style={{
+          backgroundColor: "var(--accent-sky-bg)",
+          border: "1.5px solid var(--accent-sky)",
+        }}
+      >
+        <div className="flex items-center gap-3 text-sm">
+          <span style={{ color: "var(--window-text-muted)" }}>Traversal:</span>
+          <div className="flex gap-1.5">
+            {(["dfs", "bfs"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setTraversalMode(mode)}
+                className="px-3 py-1.5 rounded-md text-xs font-pixel-heading transition-all"
+                style={{
+                  backgroundColor:
+                    traversalMode === mode
+                      ? "var(--accent-sky)"
+                      : "var(--window-bg)",
+                  color:
+                    traversalMode === mode
+                      ? "#ffffff"
+                      : "var(--window-text-muted)",
+                  border: `1px solid ${
+                    traversalMode === mode
+                      ? "var(--accent-sky)"
+                      : "var(--window-border-light)"
+                  }`,
+                }}
+              >
+                {mode === "dfs" ? "Depth-First" : "Breadth-First"}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="text-slate-400">
-          Cycle Detection: <span className="text-emerald-400">ENABLED</span>
-        </div>
+        <span
+          className="pixel-badge pixel-badge-ok"
+        >
+          Cycle Detection Active
+        </span>
       </div>
 
-      {/* Main Graph Grid & Node Inspector */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Nodes List */}
-        <div className="md:col-span-2 p-4 rounded pixel-panel space-y-3">
-          <h3 className="text-xs font-pixel-heading text-sky-400 mb-2">
-            🕸️ CONCEPT NODES ({SAMPLE_NODES.length})
+      {/* Main Grid — Concept nodes + Inspector */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Concepts List */}
+        <div className="md:col-span-2 space-y-3">
+          <h3
+            className="text-sm font-pixel-heading px-1 flex items-center gap-2"
+            style={{ color: "var(--window-text-muted)" }}
+          >
+            <span>🌳</span> Knowledge Tree ({SAMPLE_NODES.length} concepts)
           </h3>
           <div className="space-y-2">
             {SAMPLE_NODES.map((node) => {
               const isSelected = selectedNode.id === node.id;
+              const masteryColor = getMasteryColor(node.mastery);
               return (
                 <div
                   key={node.id}
                   onClick={() => setSelectedNode(node)}
-                  className={`p-3 rounded border cursor-pointer transition-all flex items-center justify-between ${
-                    isSelected
-                      ? "bg-emerald-950/80 border-emerald-500 text-emerald-100"
-                      : "bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-300"
-                  }`}
+                  className="p-4 rounded-lg cursor-pointer transition-all flex items-center justify-between"
+                  style={{
+                    backgroundColor: isSelected
+                      ? "var(--accent-sky-bg)"
+                      : "var(--window-card)",
+                    border: `1.5px solid ${
+                      isSelected
+                        ? "var(--accent-sky)"
+                        : "var(--window-border-light)"
+                    }`,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSelected) e.currentTarget.style.borderColor = "var(--window-border)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected) e.currentTarget.style.borderColor = "var(--window-border-light)";
+                  }}
                 >
                   <div>
-                    <div className="font-pixel-heading text-xs mb-1">
+                    <div
+                      className="text-sm font-medium mb-1"
+                      style={{ color: "var(--window-text-primary)" }}
+                    >
                       {node.title}
                     </div>
-                    <div className="text-[11px] font-pixel-mono text-slate-400">
-                      Category: {node.category} • Prereqs: {node.prereqs.length > 0 ? node.prereqs.join(", ") : "None"}
+                    <div className="text-xs" style={{ color: "var(--window-text-muted)" }}>
+                      {node.category}
+                      {node.prereqs.length > 0 && (
+                        <span> · Requires: {node.prereqs.join(", ")}</span>
+                      )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xs font-pixel-mono text-emerald-400 font-bold">
-                      {node.mastery}%
+                  
+                  {/* Mastery indicator — colored dot + label instead of progress bar */}
+                  <div className="flex items-center gap-2 text-right">
+                    <div>
+                      <div className="text-xs font-pixel-heading" style={{ color: masteryColor }}>
+                        {node.mastery}%
+                      </div>
+                      <div className="text-[11px]" style={{ color: "var(--window-text-faint)" }}>
+                        {getMasteryLabel(node.mastery)}
+                      </div>
                     </div>
-                    <div className="w-16 bg-slate-800 h-1.5 rounded overflow-hidden mt-1">
-                      <div
-                        className="bg-emerald-500 h-full"
-                        style={{ width: `${node.mastery}%` }}
+                    {/* Mastery ring indicator */}
+                    <svg width="28" height="28" viewBox="0 0 28 28">
+                      <circle cx="14" cy="14" r="11" fill="none" stroke="var(--window-border-light)" strokeWidth="2.5" />
+                      <circle
+                        cx="14" cy="14" r="11"
+                        fill="none"
+                        stroke={masteryColor}
+                        strokeWidth="2.5"
+                        strokeDasharray={`${(node.mastery / 100) * 69.1} 69.1`}
+                        strokeLinecap="round"
+                        transform="rotate(-90 14 14)"
+                        style={{ transition: "stroke-dasharray 0.4s ease" }}
                       />
-                    </div>
+                      <circle cx="14" cy="14" r="3" fill={masteryColor} opacity="0.6" />
+                    </svg>
                   </div>
                 </div>
               );
@@ -100,34 +164,57 @@ export const KnowledgeGraphView: React.FC = () => {
           </div>
         </div>
 
-        {/* Selected Node Details */}
-        <div className="p-4 rounded pixel-panel space-y-3 border-l-2 border-l-sky-500">
-          <h3 className="text-xs font-pixel-heading text-amber-400">
-            🔍 NODE INSPECTOR
+        {/* Node Inspector */}
+        <div
+          className="p-5 rounded-lg space-y-4 h-fit"
+          style={{
+            backgroundColor: "var(--window-card)",
+            border: "1.5px solid var(--window-border-light)",
+            borderLeft: "4px solid var(--accent-sky)",
+          }}
+        >
+          <h3
+            className="text-sm font-pixel-heading flex items-center gap-2"
+            style={{ color: "var(--accent-sky)" }}
+          >
+            <span>🔍</span> Concept Details
           </h3>
           <div>
-            <div className="text-sm font-semibold text-slate-200">
+            <div
+              className="text-base font-medium mb-1"
+              style={{ color: "var(--window-text-primary)" }}
+            >
               {selectedNode.title}
             </div>
-            <div className="text-xs font-pixel-mono text-slate-400 mt-0.5">
-              ID: {selectedNode.id}
+            <div className="text-xs" style={{ color: "var(--window-text-faint)" }}>
+              {selectedNode.id}
             </div>
           </div>
 
-          <div className="p-3 rounded bg-slate-900 border border-slate-800 text-xs font-pixel-mono space-y-1.5">
-            <div className="flex justify-between">
-              <span className="text-slate-400">Mastery Level:</span>
-              <span className="text-emerald-400">{selectedNode.mastery}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Prerequisite Chain:</span>
-              <span className="text-sky-300">
-                {selectedNode.prereqs.length === 0 ? "Root Concept" : `${selectedNode.prereqs.length} parent`}
+          <div
+            className="p-4 rounded-lg space-y-3"
+            style={{
+              backgroundColor: "var(--window-bg)",
+              border: "1px solid var(--window-border-light)",
+            }}
+          >
+            <div className="flex justify-between text-sm">
+              <span style={{ color: "var(--window-text-muted)" }}>Mastery</span>
+              <span className="font-pixel-heading text-xs" style={{ color: getMasteryColor(selectedNode.mastery) }}>
+                {selectedNode.mastery}% · {getMasteryLabel(selectedNode.mastery)}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-400">Graph Depth:</span>
-              <span className="text-amber-300">Level 2</span>
+            <div className="flex justify-between text-sm">
+              <span style={{ color: "var(--window-text-muted)" }}>Prerequisites</span>
+              <span style={{ color: "var(--accent-sky)" }}>
+                {selectedNode.prereqs.length === 0 ? "Root Concept" : `${selectedNode.prereqs.length} parent(s)`}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span style={{ color: "var(--window-text-muted)" }}>Category</span>
+              <span style={{ color: "var(--accent-earth)" }}>
+                {selectedNode.category}
+              </span>
             </div>
           </div>
 

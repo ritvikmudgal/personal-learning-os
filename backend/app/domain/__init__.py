@@ -28,6 +28,14 @@ from app.domain.learner import (
     LearnerResponse,
     LearnerUpdate,
 )
+from app.domain.library import (
+    DocumentChunkResponse,
+    MaterialConceptResponse,
+    MaterialDetailResponse,
+    MaterialResponse,
+    SearchResultResponse,
+    SemanticSearchRequest,
+)
 
 __all__ = [
     "AssessmentRecordCreate",
@@ -51,4 +59,11 @@ __all__ = [
     "LearnerKnowledgeSummary",
     "LearnerResponse",
     "LearnerUpdate",
+    "DocumentChunkResponse",
+    "MaterialConceptResponse",
+    "MaterialDetailResponse",
+    "MaterialResponse",
+    "SearchResultResponse",
+    "SemanticSearchRequest",
 ]
+

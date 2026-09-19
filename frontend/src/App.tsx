@@ -21,42 +21,49 @@ const INITIAL_STATUS: SystemStatus = {
 
 const MODULE_META: Record<
   NavTab,
-  { title: string; subtitle: string; icon: string }
+  { title: string; subtitle: string; icon: string; themeAccent: string }
 > = {
   home: {
-    title: "Sanctuary Hearth & Overview",
-    subtitle: "Personal Learning OS Home & Daily Target",
+    title: "Central Hearth",
+    subtitle: "Your Personal Learning Sanctuary",
     icon: "🏠",
+    themeAccent: "#70b37b",
   },
   learn: {
-    title: "Study Cottage & AI Assistant",
-    subtitle: "AI Guided Learning & Conceptual Breakdown",
+    title: "Study Cottage",
+    subtitle: "AI-Guided Learning & Exploration",
     icon: "💬",
+    themeAccent: "#c4943c",
   },
   knowledge: {
-    title: "Concept Graph & Observatory",
-    subtitle: "Prerequisite Relationships & Traversal Engine",
+    title: "Concept Observatory",
+    subtitle: "Knowledge Graph & Prerequisite Trees",
     icon: "🕸️",
+    themeAccent: "#5a9cb5",
   },
   assessments: {
-    title: "Shrine of Mastery & Examination Dojo",
-    subtitle: "Diagnostic Quizzes, Exams & Misconceptions",
+    title: "Shrine of Mastery",
+    subtitle: "Quizzes, Diagnostics & Examinations",
     icon: "📝",
+    themeAccent: "#c4943c",
   },
   notes: {
-    title: "Writing Gazebo & Reflection Journal",
-    subtitle: "Learner Reflection Notes & Markdown Journal",
+    title: "Writing Gazebo",
+    subtitle: "Personal Study Journal & Notes",
     icon: "📓",
+    themeAccent: "#7aa07e",
   },
   library: {
-    title: "Archive Library & Reference Vault",
-    subtitle: "Study Materials, Documents & Reference Files",
+    title: "Archive Library",
+    subtitle: "Study Materials & Document Vault",
     icon: "📚",
+    themeAccent: "#8b6b8a",
   },
   learner_state: {
-    title: "Crystal Monolith & Knowledge State",
-    subtitle: "Multi-Dimensional Knowledge Tracking & Retention",
-    icon: "📊",
+    title: "Learning Garden",
+    subtitle: "Multi-Dimensional Knowledge State",
+    icon: "🌱",
+    themeAccent: "#5a9a8a",
   },
 };
 
@@ -164,20 +171,21 @@ function App() {
         onSelectTab={(tab) => setActiveTab(tab)}
       />
 
-      {/* 2. Focused Retro Pixel Window (When a building or tab is selected) */}
+      {/* 2. Cozy Room Window (When a building or tab is selected) */}
       {activeTab && meta && (
         <PixelWindow
           title={meta.title}
           subtitle={meta.subtitle}
           icon={meta.icon}
           activeTab={activeTab}
+          themeAccent={meta.themeAccent}
           onClose={() => setActiveTab(null)}
         >
           {renderActiveView()}
         </PixelWindow>
       )}
 
-      {/* 3. Bottom Quick Navigation Dock & Diegetic System Status */}
+      {/* 3. Bottom Quick Navigation Dock */}
       <PixelDock
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}

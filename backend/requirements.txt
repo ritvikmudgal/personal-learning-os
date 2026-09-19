@@ -16,4 +16,12 @@ httpx==0.28.1
 # Testing
 pytest==8.4.1
 pytest-asyncio==1.0.0
-httpx==0.28.1
+# Ingestion & Embeddings
+pymupdf==1.28.2
+numpy==2.5.3
+python-multipart==0.0.32
+
+# Orchestration & LangGraph
+langgraph==1.2.11
+langchain-core==1.6.3
+

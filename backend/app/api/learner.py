@@ -40,6 +40,17 @@ async def list_learners(
     return [LearnerResponse.model_validate(l) for l in learners]
 
 
+@router.get("/active", response_model=LearnerResponse)
+@router.get("/me", response_model=LearnerResponse)
+async def get_active_learner(
+    db: AsyncSession = Depends(get_db_session),
+):
+    """Get or initialize the active default local learner profile."""
+    repo = LearnerRepository(db)
+    learner = await repo.get_or_create_default()
+    return LearnerResponse.model_validate(learner)
+
+
 @router.get("/{learner_id}", response_model=LearnerResponse)
 async def get_learner(
     learner_id: int,

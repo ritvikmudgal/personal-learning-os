@@ -7,63 +7,225 @@ interface HomeViewProps {
 
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       {/* Welcome Sanctuary Header */}
-      <div className="p-5 rounded pixel-panel border-l-4 border-l-emerald-500 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div
+        className="pixel-card"
+        style={{
+          padding: "1.5rem",
+          background: "linear-gradient(135deg, #fdfbf7 0%, #f4eee1 100%)",
+          borderLeft: "4px solid var(--accent-moss)",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1rem",
+        }}
+      >
         <div>
-          <h1 className="text-xl font-pixel-heading text-emerald-400 mb-1">
+          <h1
+            style={{
+              fontFamily: "var(--font-heading)",
+              fontSize: "1.25rem",
+              fontWeight: 700,
+              color: "var(--accent-moss-text)",
+              margin: "0 0 0.35rem 0",
+            }}
+          >
             Welcome to Your Personal Learning Sanctuary
           </h1>
-          <p className="text-xs font-pixel-mono text-slate-300">
-            A quiet digital world built for focused, deep comprehension.
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "var(--ink-secondary)",
+              margin: 0,
+              lineHeight: 1.5,
+            }}
+          >
+            A quiet, reflective digital space built for deep comprehension and knowledge growth.
           </p>
         </div>
         <button
           onClick={() => onNavigate("learn")}
-          className="pixel-button pixel-button-primary whitespace-nowrap text-xs"
+          className="pixel-button pixel-button-primary"
+          style={{ whiteSpace: "nowrap", fontSize: "0.85rem" }}
         >
           💬 Begin Guided Study Session
         </button>
       </div>
 
       {/* Daily Target & Core Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 rounded pixel-panel border border-emerald-900/50">
-          <div className="text-xs font-pixel-heading text-amber-400 mb-1">
-            🎯 DAILY FOCUS TARGET
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: "1rem",
+        }}
+      >
+        {/* Daily Target */}
+        <div
+          className="pixel-card"
+          style={{
+            padding: "1.25rem",
+            background: "#ffffff",
+            border: "1px solid var(--wood-light)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              color: "#b46912",
+              textTransform: "uppercase",
+              marginBottom: "0.35rem",
+            }}
+          >
+            🎯 Daily Focus Target
           </div>
-          <div className="text-sm font-semibold text-slate-200 mb-2">
+          <div
+            style={{
+              fontSize: "1rem",
+              fontWeight: 600,
+              color: "var(--ink-primary)",
+              marginBottom: "0.75rem",
+            }}
+          >
             Python Asynchronous Traversal
           </div>
-          <div className="w-full bg-slate-800 rounded h-2 overflow-hidden mb-2">
-            <div className="bg-amber-400 h-full w-2/3" />
+          <div
+            style={{
+              width: "100%",
+              height: "8px",
+              background: "var(--paper-dark)",
+              borderRadius: "4px",
+              overflow: "hidden",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <div
+              style={{
+                width: "65%",
+                height: "100%",
+                background: "linear-gradient(90deg, #d9822b 0%, #e0a353 100%)",
+                borderRadius: "4px",
+              }}
+            />
           </div>
-          <div className="text-[11px] font-pixel-mono text-slate-400 flex justify-between">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: "0.78rem",
+              color: "var(--ink-muted)",
+              fontFamily: "var(--font-mono)",
+            }}
+          >
             <span>Progress: 65%</span>
             <span>Target: 45 mins</span>
           </div>
         </div>
 
-        <div className="p-4 rounded pixel-panel border border-emerald-900/50">
-          <div className="text-xs font-pixel-heading text-emerald-400 mb-1">
-            🕸️ CONCEPT GRAPH STATE
+        {/* Concept Graph State */}
+        <div
+          className="pixel-card"
+          style={{
+            padding: "1.25rem",
+            background: "#ffffff",
+            border: "1px solid var(--wood-light)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              color: "var(--accent-moss-text)",
+              textTransform: "uppercase",
+              marginBottom: "0.35rem",
+            }}
+          >
+            🌱 Concept Graph State
           </div>
-          <div className="text-2xl font-pixel-heading text-slate-100 mb-1">
-            42 <span className="text-xs font-normal text-slate-400">Concepts</span>
+          <div
+            style={{
+              fontSize: "1.6rem",
+              fontWeight: 700,
+              fontFamily: "var(--font-heading)",
+              color: "var(--ink-primary)",
+              marginBottom: "0.25rem",
+            }}
+          >
+            42{" "}
+            <span
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 400,
+                color: "var(--ink-secondary)",
+              }}
+            >
+              Concepts Linked
+            </span>
           </div>
-          <div className="text-[11px] font-pixel-mono text-slate-400">
+          <div
+            style={{
+              fontSize: "0.78rem",
+              color: "var(--ink-muted)",
+              lineHeight: 1.4,
+            }}
+          >
             DFS / BFS Traversal Engine Active • Cycle Detection Ready
           </div>
         </div>
 
-        <div className="p-4 rounded pixel-panel border border-emerald-900/50">
-          <div className="text-xs font-pixel-heading text-sky-400 mb-1">
-            📊 LEARNER MODEL
+        {/* Learner Model */}
+        <div
+          className="pixel-card"
+          style={{
+            padding: "1.25rem",
+            background: "#ffffff",
+            border: "1px solid var(--wood-light)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              color: "#2b6b84",
+              textTransform: "uppercase",
+              marginBottom: "0.35rem",
+            }}
+          >
+            📊 Learner Knowledge State
           </div>
-          <div className="text-2xl font-pixel-heading text-slate-100 mb-1">
-            6 <span className="text-xs font-normal text-slate-400">Dimensions</span>
+          <div
+            style={{
+              fontSize: "1.6rem",
+              fontWeight: 700,
+              fontFamily: "var(--font-heading)",
+              color: "var(--ink-primary)",
+              marginBottom: "0.25rem",
+            }}
+          >
+            6{" "}
+            <span
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 400,
+                color: "var(--ink-secondary)",
+              }}
+            >
+              Active Dimensions
+            </span>
           </div>
-          <div className="text-[11px] font-pixel-mono text-slate-400">
+          <div
+            style={{
+              fontSize: "0.78rem",
+              color: "var(--ink-muted)",
+              lineHeight: 1.4,
+            }}
+          >
             Mastery, Strength, Decay, Confidence, Reliability, Misconceptions
           </div>
         </div>
@@ -71,98 +233,331 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
 
       {/* World Locations Map */}
       <div>
-        <h2 className="text-sm font-pixel-heading text-slate-200 mb-3">
-          🏞️ WORLD LOCATIONS & MODULES
+        <h2
+          style={{
+            fontFamily: "var(--font-heading)",
+            fontSize: "1rem",
+            fontWeight: 700,
+            color: "var(--ink-primary)",
+            marginBottom: "0.85rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+          }}
+        >
+          🏞️ World Locations & Modules
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: "1rem",
+          }}
+        >
+          {/* Study Cottage */}
           <div
             onClick={() => onNavigate("learn")}
-            className="p-4 rounded pixel-panel hover:border-emerald-500 cursor-pointer transition-all group"
+            className="pixel-card"
+            style={{
+              padding: "1.25rem",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.borderColor = "var(--accent-moss)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.borderColor = "var(--wood-light)";
+            }}
           >
-            <div className="text-lg mb-1 group-hover:scale-110 transition-transform origin-left">
-              💬 Study Cottage
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>💬</div>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--ink-primary)",
+                marginBottom: "0.2rem",
+              }}
+            >
+              Study Cottage
             </div>
-            <div className="text-xs font-pixel-heading text-emerald-400 mb-1">
-              Learn / Chat
+            <div
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "var(--accent-moss-text)",
+                marginBottom: "0.4rem",
+              }}
+            >
+              Interactive Guided Tutor
             </div>
-            <p className="text-xs font-pixel-mono text-slate-400">
-              Talk with your local AI study assistant for guided concept explanations.
+            <p
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--ink-secondary)",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Talk with your local AI study assistant for guided explanations & tailored practice.
             </p>
           </div>
 
+          {/* Knowledge Graph */}
           <div
             onClick={() => onNavigate("knowledge")}
-            className="p-4 rounded pixel-panel hover:border-emerald-500 cursor-pointer transition-all group"
+            className="pixel-card"
+            style={{
+              padding: "1.25rem",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.borderColor = "var(--accent-sky)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.borderColor = "var(--wood-light)";
+            }}
           >
-            <div className="text-lg mb-1 group-hover:scale-110 transition-transform origin-left">
-              🕸️ Concept Observatory
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>🌱</div>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--ink-primary)",
+                marginBottom: "0.2rem",
+              }}
+            >
+              Learning Garden
             </div>
-            <div className="text-xs font-pixel-heading text-sky-400 mb-1">
-              Knowledge Graph
+            <div
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "var(--accent-sky-text)",
+                marginBottom: "0.4rem",
+              }}
+            >
+              Concept Graph & DAG
             </div>
-            <p className="text-xs font-pixel-mono text-slate-400">
-              Explore prerequisite concept relationships and knowledge trees.
+            <p
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--ink-secondary)",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Explore prerequisite concept relationships, gaps, and mastery visualizers.
             </p>
           </div>
 
+          {/* Assessments */}
           <div
             onClick={() => onNavigate("assessments")}
-            className="p-4 rounded pixel-panel hover:border-emerald-500 cursor-pointer transition-all group"
+            className="pixel-card"
+            style={{
+              padding: "1.25rem",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.borderColor = "var(--accent-warm)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.borderColor = "var(--wood-light)";
+            }}
           >
-            <div className="text-lg mb-1 group-hover:scale-110 transition-transform origin-left">
-              📝 Shrine of Mastery
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📝</div>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--ink-primary)",
+                marginBottom: "0.2rem",
+              }}
+            >
+              Mastery Shrine
             </div>
-            <div className="text-xs font-pixel-heading text-amber-400 mb-1">
-              Assessments
+            <div
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "var(--accent-warm-text)",
+                marginBottom: "0.4rem",
+              }}
+            >
+              Diagnostics & Practice
             </div>
-            <p className="text-xs font-pixel-mono text-slate-400">
-              Test your understanding with targeted quizzes and exams.
+            <p
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--ink-secondary)",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Test your understanding with adaptive diagnostics and track mastery growth.
             </p>
           </div>
 
+          {/* Notes */}
           <div
             onClick={() => onNavigate("notes")}
-            className="p-4 rounded pixel-panel hover:border-emerald-500 cursor-pointer transition-all group"
+            className="pixel-card"
+            style={{
+              padding: "1.25rem",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.borderColor = "var(--accent-moss)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.borderColor = "var(--wood-light)";
+            }}
           >
-            <div className="text-lg mb-1 group-hover:scale-110 transition-transform origin-left">
-              📓 Writing Gazebo
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📓</div>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--ink-primary)",
+                marginBottom: "0.2rem",
+              }}
+            >
+              Writing Gazebo
             </div>
-            <div className="text-xs font-pixel-heading text-emerald-300 mb-1">
-              Learner Notes
+            <div
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "var(--accent-moss-text)",
+                marginBottom: "0.4rem",
+              }}
+            >
+              Journal & Insights
             </div>
-            <p className="text-xs font-pixel-mono text-slate-400">
-              Record reflections, code snippets, and study journal entries.
+            <p
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--ink-secondary)",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Record reflections, mental models, code notes, and personalized study logs.
             </p>
           </div>
 
+          {/* Library */}
           <div
             onClick={() => onNavigate("library")}
-            className="p-4 rounded pixel-panel hover:border-emerald-500 cursor-pointer transition-all group"
+            className="pixel-card"
+            style={{
+              padding: "1.25rem",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.borderColor = "var(--accent-plum)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.borderColor = "var(--wood-light)";
+            }}
           >
-            <div className="text-lg mb-1 group-hover:scale-110 transition-transform origin-left">
-              📚 Archive Library
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📚</div>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--ink-primary)",
+                marginBottom: "0.2rem",
+              }}
+            >
+              Archive Library
             </div>
-            <div className="text-xs font-pixel-heading text-purple-400 mb-1">
-              Reference Library
+            <div
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "var(--accent-plum-text)",
+                marginBottom: "0.4rem",
+              }}
+            >
+              Material & RAG Store
             </div>
-            <p className="text-xs font-pixel-mono text-slate-400">
-              Store and reference textbook PDFs, documentation, and articles.
+            <p
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--ink-secondary)",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Ingest textbooks, PDFs, and code docs into local semantic search retrieval.
             </p>
           </div>
 
+          {/* Learner State */}
           <div
             onClick={() => onNavigate("learner_state")}
-            className="p-4 rounded pixel-panel hover:border-emerald-500 cursor-pointer transition-all group"
+            className="pixel-card"
+            style={{
+              padding: "1.25rem",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.borderColor = "#2b6b84";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.borderColor = "var(--wood-light)";
+            }}
           >
-            <div className="text-lg mb-1 group-hover:scale-110 transition-transform origin-left">
-              📊 Crystal Monolith
+            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📊</div>
+            <div
+              style={{
+                fontSize: "0.95rem",
+                fontWeight: 700,
+                color: "var(--ink-primary)",
+                marginBottom: "0.2rem",
+              }}
+            >
+              Monolith of Reflection
             </div>
-            <div className="text-xs font-pixel-heading text-teal-300 mb-1">
-              Learner State
+            <div
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                color: "#2b6b84",
+                marginBottom: "0.4rem",
+              }}
+            >
+              6D Learner State
             </div>
-            <p className="text-xs font-pixel-mono text-slate-400">
-              Track multi-dimensional knowledge retention, decay, and confidence.
+            <p
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--ink-secondary)",
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              Track multi-dimensional retention, decay state, confidence, and misconceptions.
             </p>
           </div>
         </div>
@@ -170,3 +565,4 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
     </div>
   );
 };
+

@@ -14,8 +14,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.config import get_settings
-from app.db.database import close_db, init_db
-from app.utils.logging import setup_logging
+from app.db.database import close_db, get_db_session, init_db
+from app.db.repositories.learner_repo import LearnerRepository
+from app.utils.logging import get_logger, setup_logging
+
+
+async def init_default_learner():
+    """Ensure a default local learner profile exists in SQLite on startup."""
+    async for session in get_db_session():
+        repo = LearnerRepository(session)
+        learner = await repo.get_or_create_default()
+        await session.commit()
+        logger = get_logger("app.main")
+        logger.info("Active local learner profile ready: id=%d name='%s'", learner.id, learner.name)
+        break
 
 
 @asynccontextmanager
@@ -30,6 +42,9 @@ async def lifespan(app: FastAPI):
     # Initialize database
     await init_db()
     logger.info("Database initialized")
+
+    # Initialize default local learner profile if missing
+    await init_default_learner()
 
     # Log LLM provider configuration
     logger.info("LLM provider: %s", settings.llm_provider)

@@ -78,6 +78,14 @@ class DifficultyLevel(str, enum.Enum):
     BEGINNER = "beginner"
     INTERMEDIATE = "intermediate"
     ADVANCED = "advanced"
+
+
+class IngestionStatus(str, enum.Enum):
+    """Status of material ingestion process."""
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
     EXPERT = "expert"
 
 
@@ -137,12 +145,16 @@ class LearnerProfile(Base):
     misconceptions: Mapped[list["Misconception"]] = relationship(
         back_populates="learner", cascade="all, delete-orphan"
     )
-    materials: Mapped[list["MaterialMetadata"]] = relationship(
+    materials: Mapped[list["Material"]] = relationship(
         back_populates="learner", cascade="all, delete-orphan"
     )
     evidence_records: Mapped[list["Evidence"]] = relationship(
         back_populates="learner", cascade="all, delete-orphan"
     )
+    teaching_sessions: Mapped[list["TeachingSession"]] = relationship(
+        back_populates="learner", cascade="all, delete-orphan"
+    )
+
 
 
 class Concept(Base):
@@ -416,24 +428,136 @@ class Misconception(Base):
     learner: Mapped["LearnerProfile"] = relationship(back_populates="misconceptions")
 
 
-class MaterialMetadata(Base):
-    """Metadata for uploaded learning materials (PDFs, notes, etc.)."""
-    __tablename__ = "material_metadata"
+class Material(Base):
+    """Uploaded learning material (PDF, TXT, MD)."""
+    __tablename__ = "materials"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     learner_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("learner_profiles.id", ondelete="CASCADE"), nullable=False
     )
     title: Mapped[str] = mapped_column(String(500), nullable=False)
-    file_path: Mapped[str | None] = mapped_column(String(1000), nullable=True)
-    content_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    file_size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    associated_concept_ids: Mapped[list | None] = mapped_column(
-        JSON, nullable=True, default=list
+    original_filename: Mapped[str] = mapped_column(String(500), nullable=False)
+    file_path: Mapped[str] = mapped_column(String(1000), nullable=False)
+    file_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    file_size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    mime_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    checksum_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    ingestion_status: Mapped[IngestionStatus] = mapped_column(
+        Enum(IngestionStatus), default=IngestionStatus.PENDING, nullable=False
     )
-    upload_date: Mapped[datetime] = mapped_column(
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    page_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    total_chunks: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    uploaded_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    # Relationships
+    learner: Mapped["LearnerProfile"] = relationship(back_populates="materials")
+    chunks: Mapped[list["DocumentChunk"]] = relationship(
+        back_populates="material", cascade="all, delete-orphan"
+    )
+    material_concepts: Mapped[list["MaterialConcept"]] = relationship(
+        back_populates="material", cascade="all, delete-orphan"
+    )
+
+
+class DocumentChunk(Base):
+    """Text chunk extracted from material with provenance and optional embedding."""
+    __tablename__ = "document_chunks"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    material_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("materials.id", ondelete="CASCADE"), nullable=False
+    )
+    chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    clean_content: Mapped[str] = mapped_column(Text, nullable=False)
+    start_char: Mapped[int] = mapped_column(Integer, nullable=False)
+    end_char: Mapped[int] = mapped_column(Integer, nullable=False)
+    page_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    section_header: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    token_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    embedding: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    embedding_model: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc)
     )
 
     # Relationships
-    learner: Mapped["LearnerProfile"] = relationship(back_populates="materials")
+    material: Mapped["Material"] = relationship(back_populates="chunks")
+    chunk_concepts: Mapped[list["MaterialConcept"]] = relationship(
+        back_populates="chunk", cascade="all, delete-orphan"
+    )
+
+
+class MaterialConcept(Base):
+    """Association table linking material / chunks to concepts in the concept graph."""
+    __tablename__ = "material_concepts"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    material_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("materials.id", ondelete="CASCADE"), nullable=False
+    )
+    concept_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("concepts.id", ondelete="CASCADE"), nullable=False
+    )
+    chunk_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("document_chunks.id", ondelete="CASCADE"), nullable=True
+    )
+    relevance_score: Mapped[float] = mapped_column(Float, default=1.0, nullable=False)
+    extraction_method: Mapped[str] = mapped_column(String(50), default="llm", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
+    # Relationships
+    material: Mapped["Material"] = relationship(back_populates="material_concepts")
+    concept: Mapped["Concept"] = relationship()
+    chunk: Mapped["DocumentChunk | None"] = relationship(back_populates="chunk_concepts")
+
+
+class TeachingSession(Base):
+    """A persistent learning/teaching session.
+
+    Tracks a interactive tutoring session for a target concept, preserving
+    concepts visited, teaching steps, RAG material sources used, evidence produced,
+    and conversation turns.
+    """
+    __tablename__ = "teaching_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    learner_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("learner_profiles.id", ondelete="CASCADE"), nullable=False
+    )
+    target_concept_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("concepts.id", ondelete="SET NULL"), nullable=True
+    )
+    user_goal: Mapped[str] = mapped_column(String(500), nullable=False)
+    status: Mapped[str] = mapped_column(String(50), default="active", nullable=False)  # active, completed, paused
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    
+    concepts_visited: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
+    teaching_plan: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
+    messages: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
+    session_metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=dict)
+    
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    # Relationships
+    learner: Mapped["LearnerProfile"] = relationship(back_populates="teaching_sessions")
+    target_concept: Mapped["Concept | None"] = relationship()
+
+

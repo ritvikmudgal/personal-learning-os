@@ -37,6 +37,28 @@ class LearnerRepository:
         )
         return result.scalar_one_or_none()
 
+    async def get_or_create_default(
+        self, default_name: str = "Local Learner"
+    ) -> LearnerProfile:
+        """Get the default/active local learner profile, creating one if none exists."""
+        result = await self.session.execute(
+            select(LearnerProfile).order_by(LearnerProfile.id.asc()).limit(1)
+        )
+        learner = result.scalar_one_or_none()
+        if learner is not None:
+            return learner
+
+        learner = LearnerProfile(
+            name=default_name,
+            email="local@learning-os.internal",
+            preferences={"theme": "default"},
+        )
+        self.session.add(learner)
+        await self.session.flush()
+        await self.session.refresh(learner)
+        logger.info("Created default local learner profile: id=%d name=%s", learner.id, learner.name)
+        return learner
+
     async def get_all(self) -> list[LearnerProfile]:
         """Get all learner profiles."""
         result = await self.session.execute(select(LearnerProfile))
