@@ -14,6 +14,15 @@ class ConceptCreate(BaseModel):
     difficulty_level: Optional[str] = None  # beginner, intermediate, advanced, expert
 
 
+class ConceptUpdate(BaseModel):
+    """Schema for updating an existing concept."""
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = None
+    domain: Optional[str] = Field(None, max_length=255)
+    difficulty_level: Optional[str] = None
+
+
+
 class ConceptResponse(BaseModel):
     """Schema for concept API responses."""
     id: int

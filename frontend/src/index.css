@@ -1,16 +1,51 @@
 @import "tailwindcss";
 
-/* Minimal foundation styles — the full design system will be built later */
+/* ----------------------------------------------------
+   Personal Learning OS - Pixel Nature Palette & Tokens
+   ---------------------------------------------------- */
 :root {
-  --bg-primary: #0f1117;
-  --bg-secondary: #1a1d27;
-  --text-primary: #e2e4e9;
-  --text-secondary: #8b8fa3;
-  --accent: #6c8cff;
-  --accent-dim: #4a6ad4;
-  --success: #4ade80;
-  --warning: #fbbf24;
-  --error: #f87171;
+  /* Atmosphere & Sky */
+  --sky-top: #689cb0;
+  --sky-mid: #9bc4cb;
+  --sky-bottom: #dbebe2;
+  --cloud-color: rgba(255, 255, 255, 0.85);
+
+  /* Grass & Foliage */
+  --grass-dark: #2f5d37;
+  --grass-main: #4a8c54;
+  --grass-light: #70b37b;
+  --grass-highlight: #9dd8a6;
+
+  /* Water & River */
+  --river-deep: #2b5c73;
+  --river-mid: #4a8ca7;
+  --river-light: #7cb9cb;
+  --river-foam: #e2f5f8;
+
+  /* Earth & Structures */
+  --earth-dark: #402e23;
+  --earth-main: #684a38;
+  --earth-light: #946e56;
+  --wood-roof: #83472f;
+  --wood-trim: #4e2a1b;
+
+  /* Retro Pixel Window System */
+  --window-bg: #1c2620;
+  --window-card: #25332b;
+  --window-card-hover: #2e3e35;
+  --window-border: #3d5244;
+  --window-header: #141c18;
+  --window-text-primary: #e6f2eb;
+  --window-text-muted: #8ea896;
+  --window-accent: #78c287;
+  --window-accent-warm: #e3b067;
+  --window-accent-sky: #70b2c4;
+
+  /* Typography */
+  --font-pixel-heading: "Pixelify Sans", "Press Start 2P", monospace;
+  --font-pixel-mono: "VT323", monospace;
+  --font-pixel-display: "Silkscreen", monospace;
+  --font-body: system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -20,15 +55,166 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
+  font-family: var(--font-body);
+  background-color: var(--sky-top);
+  color: var(--window-text-primary);
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
+  user-select: none;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pixel Art Crisp Rendering Utility */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.font-pixel-heading {
+  font-family: var(--font-pixel-heading);
+}
+
+.font-pixel-mono {
+  font-family: var(--font-pixel-mono);
+}
+
+.font-pixel-display {
+  font-family: var(--font-pixel-display);
+}
+
+/* Custom Pixel Window Styling */
+.pixel-window {
+  background-color: var(--window-bg);
+  border: 4px solid var(--window-border);
+  box-shadow: 
+    0 0 0 2px #0f1512,
+    0 12px 32px rgba(0, 0, 0, 0.45);
+  border-radius: 4px;
+}
+
+.pixel-panel {
+  background-color: var(--window-card);
+  border: 2px solid var(--window-border);
+  border-radius: 3px;
+}
+
+.pixel-button {
+  background-color: var(--window-card);
+  border: 2px solid var(--window-border);
+  color: var(--window-text-primary);
+  font-family: var(--font-pixel-heading);
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.pixel-button:hover {
+  background-color: var(--window-card-hover);
+  border-color: var(--window-accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.pixel-button:active {
+  transform: translateY(1px);
+}
+
+.pixel-button-primary {
+  background-color: var(--grass-main);
+  border-color: var(--grass-highlight);
+  color: #ffffff;
+}
+
+.pixel-button-primary:hover {
+  background-color: var(--grass-light);
+  border-color: #bbf2c4;
+}
+
+/* Animations */
+@keyframes cloudDriftSlow {
+  0% { transform: translateX(-150px); }
+  100% { transform: translateX(calc(100vw + 150px)); }
+}
+
+@keyframes cloudDriftFast {
+  0% { transform: translateX(-200px); }
+  100% { transform: translateX(calc(100vw + 200px)); }
+}
+
+@keyframes riverFlow {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 0; }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes chimneySmoke {
+  0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
+  50% { transform: translateY(-12px) scale(1.2); opacity: 0.5; }
+  100% { transform: translateY(-24px) scale(1.6); opacity: 0; }
+}
+
+@keyframes swayTree {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.05); }
+}
+
+.animate-cloud-slow {
+  animation: cloudDriftSlow 65s linear infinite;
+}
+
+.animate-cloud-fast {
+  animation: cloudDriftFast 42s linear infinite;
+}
+
+.animate-float {
+  animation: floatGentle 3s ease-in-out infinite;
+}
+
+.animate-sway {
+  transform-origin: bottom center;
+  animation: swayTree 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+/* Custom Scrollbar for Retro Windows */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--window-header);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--window-border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--window-accent);
 }

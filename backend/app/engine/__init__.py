@@ -1,13 +1,20 @@
-"""Future learning engine — placeholder module.
+"""Core learning engine package.
 
-This package will contain the core adaptive learning logic:
-- Knowledge state update algorithms
-- Spaced repetition scheduling
-- Prerequisite gap detection
-- Misconception tracing
-- Learning path recommendation
-- Assessment generation and evaluation
-
-These will be built in future layers on top of the domain foundation
-established in db/models.py and the LLM provider abstraction.
+Contains deterministic algorithms for:
+- Knowledge state updates from evidence
+- Retention and forgetting curves
+- Prerequisite gap analysis
 """
+
+from app.engine.decay_service import compute_decay, compute_effective_mastery
+from app.engine.gap_analysis import ConceptGapInfo, GapAnalysisResult, find_learning_gaps
+from app.engine.update_engine import update_state_from_evidence
+
+__all__ = [
+    "compute_decay",
+    "compute_effective_mastery",
+    "update_state_from_evidence",
+    "find_learning_gaps",
+    "ConceptGapInfo",
+    "GapAnalysisResult",
+]

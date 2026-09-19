@@ -81,16 +81,17 @@ async def test_knowledge_state(test_session):
     state = KnowledgeState(
         learner_id=learner.id,
         concept_id=concept.id,
-        understanding_level=0.7,
+        mastery_probability=0.7,
         confidence=0.8,
-        demonstrated_level=0.6,
+        knowledge_strength=0.6,
     )
     test_session.add(state)
     await test_session.flush()
 
-    assert state.understanding_level == 0.7
+    assert state.mastery_probability == 0.7
     assert state.confidence == 0.8
-    assert state.demonstrated_level == 0.6
+    assert state.knowledge_strength == 0.6
+
 
 
 @pytest.mark.asyncio

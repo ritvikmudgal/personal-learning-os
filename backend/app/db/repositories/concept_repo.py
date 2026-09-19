@@ -73,6 +73,47 @@ class ConceptRepository:
         )
         return rel
 
+    async def update(self, concept_id: int, data: dict) -> Concept | None:
+        """Update concept fields."""
+        concept = await self.get_by_id(concept_id)
+        if not concept:
+            return None
+        for key, value in data.items():
+            if value is not None and hasattr(concept, key):
+                setattr(concept, key, value)
+        await self.session.flush()
+        await self.session.refresh(concept)
+        return concept
+
+    async def get_relationship(self, relationship_id: int) -> ConceptRelationship | None:
+        """Get a single relationship by ID."""
+        result = await self.session.execute(
+            select(ConceptRelationship).where(ConceptRelationship.id == relationship_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def remove_relationship(self, relationship_id: int) -> bool:
+        """Remove a concept relationship."""
+        rel = await self.get_relationship(relationship_id)
+        if not rel:
+            return False
+        await self.session.delete(rel)
+        await self.session.flush()
+        logger.info("Removed concept relationship: id=%d", relationship_id)
+        return True
+
+    async def get_relationships_for_concept(
+        self, concept_id: int
+    ) -> list[ConceptRelationship]:
+        """Get all relationships where concept is either source or target."""
+        result = await self.session.execute(
+            select(ConceptRelationship).where(
+                (ConceptRelationship.source_concept_id == concept_id)
+                | (ConceptRelationship.target_concept_id == concept_id)
+            )
+        )
+        return list(result.scalars().all())
+
     async def get_prerequisites(self, concept_id: int) -> list[Concept]:
         """Get all prerequisite concepts for a given concept."""
         result = await self.session.execute(
@@ -102,3 +143,4 @@ class ConceptRepository:
             )
         )
         return list(result.scalars().all())
+

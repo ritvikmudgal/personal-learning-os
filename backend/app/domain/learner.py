@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 class LearnerCreate(BaseModel):
     """Schema for creating a new learner profile."""
+
     name: str = Field(..., min_length=1, max_length=255)
     email: Optional[str] = Field(None, max_length=255)
     preferences: Optional[dict] = Field(default_factory=dict)
@@ -15,6 +16,7 @@ class LearnerCreate(BaseModel):
 
 class LearnerUpdate(BaseModel):
     """Schema for updating a learner profile."""
+
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     email: Optional[str] = Field(None, max_length=255)
     preferences: Optional[dict] = None
@@ -22,6 +24,7 @@ class LearnerUpdate(BaseModel):
 
 class LearnerResponse(BaseModel):
     """Schema for learner profile API responses."""
+
     id: int
     name: str
     email: Optional[str] = None
@@ -33,22 +36,30 @@ class LearnerResponse(BaseModel):
 
 
 class KnowledgeStateResponse(BaseModel):
-    """Schema for a single knowledge state entry."""
+    """Schema for multi-dimensional learner knowledge state API responses."""
+
     id: int
+    learner_id: int
     concept_id: int
     concept_name: Optional[str] = None
-    understanding_level: float
+    mastery_probability: float
+    knowledge_strength: float
+    forgetting_state: float
     confidence: float
-    demonstrated_level: float
-    decay_factor: float
-    last_assessed_at: Optional[datetime] = None
+    evidence_reliability: float
+    misconception_severity: float
+    effective_mastery: Optional[float] = None
+    first_seen_at: datetime
     last_studied_at: Optional[datetime] = None
+    last_assessed_at: Optional[datetime] = None
+    last_reinforced_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 
 
 class LearnerKnowledgeSummary(BaseModel):
     """Summary of a learner's knowledge state across all concepts."""
+
     learner_id: int
     total_concepts_studied: int
     states: list[KnowledgeStateResponse]
