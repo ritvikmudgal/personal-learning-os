@@ -48,16 +48,36 @@ class LearningGraphRunner:
 
     async def understand_goal(self, state: LearningState) -> LearningState:
         """Parse goal and resolve target concept against Concept Graph."""
-        user_goal = state.get("user_goal", "")
-        intent_res = await self.tutor_ops.classify_learning_intent(user_goal)
-        raw_concept = intent_res.get("target_concept", user_goal)
+        from app.utils.query_cleaner import clean_concept_name, strip_conversational_noise
 
+        user_goal = state.get("user_goal", "")
         concepts = await self.graph_service.get_all_concepts()
         concepts_list = [{"id": c.id, "name": c.name} for c in concepts]
 
-        res = await self.tutor_ops.resolve_concept_name(raw_concept, concepts_list)
-        matched_id = res.get("matched_id")
-        matched_name = res.get("matched_name", raw_concept)
+        # 1. Try deterministic Python-side concept resolution first (1ms)
+        det_match = self.tutor_ops.deterministic_concept_resolution(user_goal, concepts_list)
+        if det_match:
+            matched_id = det_match["matched_id"]
+            matched_name = det_match["matched_name"]
+            intent = "teach"
+        else:
+            # Fall back to single LLM intent & concept resolution if no exact/substring match
+            intent_res = await self.tutor_ops.classify_learning_intent(user_goal)
+            raw_concept = intent_res.get("target_concept", user_goal)
+            intent = intent_res.get("intent", "teach")
+
+            res = await self.tutor_ops.resolve_concept_name(raw_concept, concepts_list)
+            matched_id = res.get("matched_id")
+            matched_name = clean_concept_name(res.get("matched_name")) or strip_conversational_noise(raw_concept) or "Learning Topic"
+
+        # Check for explicit user intent override triggers
+        lower_goal = user_goal.lower()
+        override_triggers = [
+            "skip", "already know", "don't want to study", "do not want to study",
+            "move to", "move on to", "direct to", "continue with", "continue to"
+        ]
+        is_override = intent == "override" or any(trig in lower_goal for trig in override_triggers)
+        state["override_prerequisites"] = is_override
 
         if matched_id is None:
             # Create a new concept in the graph dynamically
@@ -134,12 +154,15 @@ class LearningGraphRunner:
         state["prerequisite_gaps"] = weak_gaps
         state["relevant_known_concepts"] = known_prereqs
 
-        if weak_gaps:
+        # Respect user intent override: do not force gap teaching if user asked to bypass/target directly
+        if weak_gaps and not state.get("override_prerequisites"):
             first_gap = weak_gaps[0]
             state["current_concept_id"] = first_gap["id"]
             state["current_concept_name"] = first_gap["name"]
             state["next_action"] = "teach_gap"
         else:
+            state["current_concept_id"] = target_id
+            state["current_concept_name"] = state.get("target_concept_name")
             state["next_action"] = "teach_target"
 
         state["step_count"] = state.get("step_count", 0) + 1
@@ -147,14 +170,17 @@ class LearningGraphRunner:
 
     async def retrieve_materials(self, state: LearningState) -> LearningState:
         """Retrieve relevant Library materials using semantic vector search (Layer 3 RAG)."""
+        from app.utils.query_cleaner import build_clean_search_query
+
         learner_id = state.get("learner_id", 1)
         target_name = state.get("current_concept_name") or state.get("target_concept_name", "")
         user_goal = state.get("user_goal", "")
 
         materials = []
         try:
+            search_query = build_clean_search_query(target_name, user_goal)
             res_list = await self.retrieval_service.search_semantic(
-                query=f"{target_name} {user_goal}",
+                query=search_query,
                 learner_id=learner_id,
                 top_k=3,
             )
@@ -175,21 +201,41 @@ class LearningGraphRunner:
         return state
 
     async def plan_teaching(self, state: LearningState) -> LearningState:
-        """Synthesize personalized step-by-step teaching plan."""
+        """Synthesize personalized step-by-step teaching plan deterministically for low latency."""
         target_name = state.get("target_concept_name", "the requested topic")
         weak_names = [g["name"] for g in state.get("prerequisite_gaps", [])]
-        known_names = [k["name"] for k in state.get("relevant_known_concepts", [])]
-        misc_descs = [m["description"] for m in state.get("misconceptions", [])]
 
-        plan = await self.tutor_ops.generate_teaching_plan(
-            target_concept=target_name,
-            weak_prereqs=weak_names,
-            known_prereqs=known_names,
-            active_misconceptions=misc_descs,
-        )
+        if weak_names:
+            plan = [
+                f"Review foundation: {', '.join(weak_names[:2])}",
+                f"Introduce core ideas of {target_name}",
+                f"Explore key mechanisms and examples",
+                f"Verify understanding of {target_name}",
+            ]
+        else:
+            plan = [
+                f"Introduce core concept: {target_name}",
+                f"Explore key mechanisms and examples",
+                f"Verify understanding of {target_name}",
+            ]
 
         state["teaching_plan"] = plan
         state["step_count"] = state.get("step_count", 0) + 1
+        return state
+
+    async def execute_context_pipeline_parallel(self, state: LearningState) -> LearningState:
+        """Execute independent context loading, gap analysis, and material retrieval concurrently."""
+        import asyncio
+        state = await self.understand_goal(state)
+
+        # Execute load_learner_context, analyze_prerequisites, and retrieve_materials concurrently
+        await asyncio.gather(
+            self.load_learner_context(state),
+            self.analyze_prerequisites(state),
+            self.retrieve_materials(state),
+        )
+
+        state = await self.plan_teaching(state)
         return state
 
     async def teach_step(self, state: LearningState) -> LearningState:

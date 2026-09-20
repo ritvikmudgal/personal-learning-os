@@ -1,5 +1,16 @@
 import React from "react";
 import { NavTab } from "../PixelEnvironment";
+import {
+  StudyIcon,
+  LibraryIcon,
+  KnowledgeIcon,
+  AssessmentIcon,
+  NotesIcon,
+  LearnerIcon,
+  SparklesIcon,
+  TrendingUpIcon,
+  BookOpenIcon,
+} from "../WorldIcons";
 
 interface HomeViewProps {
   onNavigate: (tab: NavTab) => void;
@@ -7,557 +18,200 @@ interface HomeViewProps {
 
 export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+    <div className="space-y-6">
       {/* Welcome Sanctuary Header */}
-      <div
-        className="pixel-card"
-        style={{
-          padding: "1.5rem",
-          background: "linear-gradient(135deg, #fdfbf7 0%, #f4eee1 100%)",
-          borderLeft: "4px solid var(--accent-moss)",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1rem",
-        }}
-      >
+      <div className="world-panel p-6 bg-gradient-to-r from-amber-50/80 via-emerald-50/40 to-amber-50/80 border-l-4 border-l-emerald-700 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              color: "var(--accent-moss-text)",
-              margin: "0 0 0.35rem 0",
-            }}
-          >
-            Welcome to Your Personal Learning Sanctuary
+          <div className="flex items-center gap-2 text-emerald-800 mb-1">
+            <SparklesIcon size={18} />
+            <span className="font-heading font-semibold text-xs tracking-wider uppercase">
+              Personal Desktop Learning Sanctuary
+            </span>
+          </div>
+          <h1 className="text-xl font-heading font-bold text-slate-900">
+            Welcome to Your Personal Learning World
           </h1>
-          <p
-            style={{
-              fontSize: "0.875rem",
-              color: "var(--ink-secondary)",
-              margin: 0,
-              lineHeight: 1.5,
-            }}
-          >
-            A quiet, reflective digital space built for deep comprehension and knowledge growth.
+          <p className="text-sm text-slate-600 font-body max-w-xl mt-1">
+            A quiet, reflective digital space built for deep comprehension, structured recall, and knowledge growth.
           </p>
         </div>
         <button
           onClick={() => onNavigate("learn")}
-          className="pixel-button pixel-button-primary"
-          style={{ whiteSpace: "nowrap", fontSize: "0.85rem" }}
+          className="world-button world-button-primary px-5 py-2.5 shadow-sm hover:shadow"
         >
-          💬 Begin Guided Study Session
+          <StudyIcon size={18} />
+          <span>Begin Guided Study Session</span>
         </button>
       </div>
 
-      {/* Daily Target & Core Stats Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: "1rem",
-        }}
-      >
+      {/* Daily Focus & Core Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Daily Target */}
-        <div
-          className="pixel-card"
-          style={{
-            padding: "1.25rem",
-            background: "#ffffff",
-            border: "1px solid var(--wood-light)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "#b46912",
-              textTransform: "uppercase",
-              marginBottom: "0.35rem",
-            }}
-          >
-            🎯 Daily Focus Target
+        <div className="world-panel p-5 bg-white">
+          <div className="flex items-center gap-2 text-amber-700 text-xs font-heading font-semibold tracking-wider uppercase mb-2">
+            <TrendingUpIcon size={16} />
+            <span>Daily Focus Target</span>
           </div>
-          <div
-            style={{
-              fontSize: "1rem",
-              fontWeight: 600,
-              color: "var(--ink-primary)",
-              marginBottom: "0.75rem",
-            }}
-          >
+          <div className="text-base font-heading font-semibold text-slate-800 mb-3">
             Python Asynchronous Traversal
           </div>
-          <div
-            style={{
-              width: "100%",
-              height: "8px",
-              background: "var(--paper-dark)",
-              borderRadius: "4px",
-              overflow: "hidden",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <div
-              style={{
-                width: "65%",
-                height: "100%",
-                background: "linear-gradient(90deg, #d9822b 0%, #e0a353 100%)",
-                borderRadius: "4px",
-              }}
-            />
+          <div className="w-full h-2 bg-amber-100/80 rounded-full overflow-hidden mb-2">
+            <div className="w-2/3 h-full bg-amber-600 rounded-full" />
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "0.78rem",
-              color: "var(--ink-muted)",
-              fontFamily: "var(--font-mono)",
-            }}
-          >
+          <div className="flex justify-between text-xs text-slate-500 font-body">
             <span>Progress: 65%</span>
             <span>Target: 45 mins</span>
           </div>
         </div>
 
         {/* Concept Graph State */}
-        <div
-          className="pixel-card"
-          style={{
-            padding: "1.25rem",
-            background: "#ffffff",
-            border: "1px solid var(--wood-light)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "var(--accent-moss-text)",
-              textTransform: "uppercase",
-              marginBottom: "0.35rem",
-            }}
-          >
-            🌱 Concept Graph State
+        <div className="world-panel p-5 bg-white">
+          <div className="flex items-center gap-2 text-emerald-700 text-xs font-heading font-semibold tracking-wider uppercase mb-2">
+            <KnowledgeIcon size={16} />
+            <span>Concept Graph State</span>
           </div>
-          <div
-            style={{
-              fontSize: "1.6rem",
-              fontWeight: 700,
-              fontFamily: "var(--font-heading)",
-              color: "var(--ink-primary)",
-              marginBottom: "0.25rem",
-            }}
-          >
-            42{" "}
-            <span
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: 400,
-                color: "var(--ink-secondary)",
-              }}
-            >
-              Concepts Linked
-            </span>
+          <div className="text-2xl font-heading font-bold text-slate-900 mb-1">
+            42 <span className="text-xs font-normal text-slate-500">Concepts Linked</span>
           </div>
-          <div
-            style={{
-              fontSize: "0.78rem",
-              color: "var(--ink-muted)",
-              lineHeight: 1.4,
-            }}
-          >
+          <p className="text-xs text-slate-500 font-body">
             DFS / BFS Traversal Engine Active • Cycle Detection Ready
-          </div>
+          </p>
         </div>
 
         {/* Learner Model */}
-        <div
-          className="pixel-card"
-          style={{
-            padding: "1.25rem",
-            background: "#ffffff",
-            border: "1px solid var(--wood-light)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "#2b6b84",
-              textTransform: "uppercase",
-              marginBottom: "0.35rem",
-            }}
-          >
-            📊 Learner Knowledge State
+        <div className="world-panel p-5 bg-white">
+          <div className="flex items-center gap-2 text-sky-700 text-xs font-heading font-semibold tracking-wider uppercase mb-2">
+            <LearnerIcon size={16} />
+            <span>Learner Knowledge State</span>
           </div>
-          <div
-            style={{
-              fontSize: "1.6rem",
-              fontWeight: 700,
-              fontFamily: "var(--font-heading)",
-              color: "var(--ink-primary)",
-              marginBottom: "0.25rem",
-            }}
-          >
-            6{" "}
-            <span
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: 400,
-                color: "var(--ink-secondary)",
-              }}
-            >
-              Active Dimensions
-            </span>
+          <div className="text-2xl font-heading font-bold text-slate-900 mb-1">
+            6 <span className="text-xs font-normal text-slate-500">Active Dimensions</span>
           </div>
-          <div
-            style={{
-              fontSize: "0.78rem",
-              color: "var(--ink-muted)",
-              lineHeight: 1.4,
-            }}
-          >
+          <p className="text-xs text-slate-500 font-body">
             Mastery, Strength, Decay, Confidence, Reliability, Misconceptions
-          </div>
+          </p>
         </div>
       </div>
 
-      {/* World Locations Map */}
+      {/* World Destinations Grid */}
       <div>
-        <h2
-          style={{
-            fontFamily: "var(--font-heading)",
-            fontSize: "1rem",
-            fontWeight: 700,
-            color: "var(--ink-primary)",
-            marginBottom: "0.85rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          🏞️ World Locations & Modules
+        <h2 className="text-base font-heading font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <BookOpenIcon size={18} className="text-emerald-700" />
+          <span>World Destinations & Learning Modules</span>
         </h2>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "1rem",
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Study Cottage */}
           <div
             onClick={() => onNavigate("learn")}
-            className="pixel-card"
-            style={{
-              padding: "1.25rem",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.borderColor = "var(--accent-moss)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.borderColor = "var(--wood-light)";
-            }}
+            className="world-panel p-5 bg-white cursor-pointer hover:border-emerald-600 hover:-translate-y-0.5 transition-all duration-150 group"
           >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>💬</div>
-            <div
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: 700,
-                color: "var(--ink-primary)",
-                marginBottom: "0.2rem",
-              }}
-            >
+            <div className="w-10 h-10 rounded-xl bg-emerald-100/70 text-emerald-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <StudyIcon size={22} />
+            </div>
+            <div className="text-base font-heading font-semibold text-slate-900 mb-1 group-hover:text-emerald-800 transition-colors">
               Study Cottage
             </div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "var(--accent-moss-text)",
-                marginBottom: "0.4rem",
-              }}
-            >
+            <div className="text-xs font-medium text-emerald-700 mb-2">
               Interactive Guided Tutor
             </div>
-            <p
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ink-secondary)",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Talk with your local AI study assistant for guided explanations & tailored practice.
+            <p className="text-xs text-slate-600 font-body leading-relaxed">
+              Engage with your local AI study assistant for guided explanations, tailored practice, and conceptual clarity.
             </p>
           </div>
 
-          {/* Knowledge Graph */}
-          <div
-            onClick={() => onNavigate("knowledge")}
-            className="pixel-card"
-            style={{
-              padding: "1.25rem",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.borderColor = "var(--accent-sky)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.borderColor = "var(--wood-light)";
-            }}
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>🌱</div>
-            <div
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: 700,
-                color: "var(--ink-primary)",
-                marginBottom: "0.2rem",
-              }}
-            >
-              Learning Garden
-            </div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "var(--accent-sky-text)",
-                marginBottom: "0.4rem",
-              }}
-            >
-              Concept Graph & DAG
-            </div>
-            <p
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ink-secondary)",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Explore prerequisite concept relationships, gaps, and mastery visualizers.
-            </p>
-          </div>
-
-          {/* Assessments */}
-          <div
-            onClick={() => onNavigate("assessments")}
-            className="pixel-card"
-            style={{
-              padding: "1.25rem",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.borderColor = "var(--accent-warm)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.borderColor = "var(--wood-light)";
-            }}
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📝</div>
-            <div
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: 700,
-                color: "var(--ink-primary)",
-                marginBottom: "0.2rem",
-              }}
-            >
-              Mastery Shrine
-            </div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "var(--accent-warm-text)",
-                marginBottom: "0.4rem",
-              }}
-            >
-              Diagnostics & Practice
-            </div>
-            <p
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ink-secondary)",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Test your understanding with adaptive diagnostics and track mastery growth.
-            </p>
-          </div>
-
-          {/* Notes */}
-          <div
-            onClick={() => onNavigate("notes")}
-            className="pixel-card"
-            style={{
-              padding: "1.25rem",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.borderColor = "var(--accent-moss)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.borderColor = "var(--wood-light)";
-            }}
-          >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📓</div>
-            <div
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: 700,
-                color: "var(--ink-primary)",
-                marginBottom: "0.2rem",
-              }}
-            >
-              Writing Gazebo
-            </div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "var(--accent-moss-text)",
-                marginBottom: "0.4rem",
-              }}
-            >
-              Journal & Insights
-            </div>
-            <p
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ink-secondary)",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Record reflections, mental models, code notes, and personalized study logs.
-            </p>
-          </div>
-
-          {/* Library */}
+          {/* Library Archive */}
           <div
             onClick={() => onNavigate("library")}
-            className="pixel-card"
-            style={{
-              padding: "1.25rem",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.borderColor = "var(--accent-plum)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.borderColor = "var(--wood-light)";
-            }}
+            className="world-panel p-5 bg-white cursor-pointer hover:border-amber-600 hover:-translate-y-0.5 transition-all duration-150 group"
           >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📚</div>
-            <div
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: 700,
-                color: "var(--ink-primary)",
-                marginBottom: "0.2rem",
-              }}
-            >
+            <div className="w-10 h-10 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <LibraryIcon size={22} />
+            </div>
+            <div className="text-base font-heading font-semibold text-slate-900 mb-1 group-hover:text-amber-800 transition-colors">
               Archive Library
             </div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "var(--accent-plum-text)",
-                marginBottom: "0.4rem",
-              }}
-            >
-              Material & RAG Store
+            <div className="text-xs font-medium text-amber-700 mb-2">
+              Document Ingestion & Semantic Vault
             </div>
-            <p
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ink-secondary)",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Ingest textbooks, PDFs, and code docs into local semantic search retrieval.
+            <p className="text-xs text-slate-600 font-body leading-relaxed">
+              Upload PDFs and markdown notes, run semantic search queries, and view extracted document chunks.
             </p>
           </div>
 
-          {/* Learner State */}
+          {/* Concept Observatory */}
+          <div
+            onClick={() => onNavigate("knowledge")}
+            className="world-panel p-5 bg-white cursor-pointer hover:border-sky-600 hover:-translate-y-0.5 transition-all duration-150 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-sky-100/70 text-sky-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <KnowledgeIcon size={22} />
+            </div>
+            <div className="text-base font-heading font-semibold text-slate-900 mb-1 group-hover:text-sky-800 transition-colors">
+              Concept Observatory
+            </div>
+            <div className="text-xs font-medium text-sky-700 mb-2">
+              Prerequisite DAG & Force Graph
+            </div>
+            <p className="text-xs text-slate-600 font-body leading-relaxed">
+              Visualize prerequisite concept networks, inspect topic nodes, and identify learning gaps.
+            </p>
+          </div>
+
+          {/* Learner Garden */}
           <div
             onClick={() => onNavigate("learner_state")}
-            className="pixel-card"
-            style={{
-              padding: "1.25rem",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.borderColor = "#2b6b84";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.borderColor = "var(--wood-light)";
-            }}
+            className="world-panel p-5 bg-white cursor-pointer hover:border-emerald-600 hover:-translate-y-0.5 transition-all duration-150 group"
           >
-            <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>📊</div>
-            <div
-              style={{
-                fontSize: "0.95rem",
-                fontWeight: 700,
-                color: "var(--ink-primary)",
-                marginBottom: "0.2rem",
-              }}
-            >
-              Monolith of Reflection
+            <div className="w-10 h-10 rounded-xl bg-emerald-100/70 text-emerald-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <LearnerIcon size={22} />
             </div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                color: "#2b6b84",
-                marginBottom: "0.4rem",
-              }}
-            >
-              6D Learner State
+            <div className="text-base font-heading font-semibold text-slate-900 mb-1 group-hover:text-emerald-800 transition-colors">
+              Learner Garden
             </div>
-            <p
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--ink-secondary)",
-                margin: 0,
-                lineHeight: 1.4,
-              }}
-            >
-              Track multi-dimensional retention, decay state, confidence, and misconceptions.
+            <div className="text-xs font-medium text-emerald-700 mb-2">
+              Multi-Dimensional Mastery State
+            </div>
+            <p className="text-xs text-slate-600 font-body leading-relaxed">
+              Monitor memory decay rates, confidence levels, and concept mastery growth over time.
+            </p>
+          </div>
+
+          {/* Writing Studio */}
+          <div
+            onClick={() => onNavigate("notes")}
+            className="world-panel p-5 bg-white cursor-pointer hover:border-amber-600 hover:-translate-y-0.5 transition-all duration-150 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <NotesIcon size={22} />
+            </div>
+            <div className="text-base font-heading font-semibold text-slate-900 mb-1 group-hover:text-amber-800 transition-colors">
+              Writing Studio
+            </div>
+            <div className="text-xs font-medium text-amber-700 mb-2">
+              Learner Notes & Reflection Journal
+            </div>
+            <p className="text-xs text-slate-600 font-body leading-relaxed">
+              Jot down personal study notes, synthesize key learnings, and organize study thoughts.
+            </p>
+          </div>
+
+          {/* Assessment Pavilion */}
+          <div
+            onClick={() => onNavigate("assessments")}
+            className="world-panel p-5 bg-white cursor-pointer hover:border-terracotta hover:-translate-y-0.5 transition-all duration-150 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-orange-100/70 text-amber-900 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <AssessmentIcon size={22} />
+            </div>
+            <div className="text-base font-heading font-semibold text-slate-900 mb-1 group-hover:text-amber-900 transition-colors">
+              Assessment Pavilion
+            </div>
+            <div className="text-xs font-medium text-amber-800 mb-2">
+              Mastery Diagnostics & Practice
+            </div>
+            <p className="text-xs text-slate-600 font-body leading-relaxed">
+              Evaluate topic comprehension through quiet, focused diagnostic checks and practice exercises.
             </p>
           </div>
         </div>
@@ -565,4 +219,3 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate }) => {
     </div>
   );
 };
-

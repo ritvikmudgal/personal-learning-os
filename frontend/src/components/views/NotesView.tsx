@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import {
+  NotesIcon,
+  PlusIcon,
+  SparklesIcon,
+} from "../WorldIcons";
 
 export const NotesView: React.FC = () => {
   const [notes] = useState([
@@ -23,129 +28,87 @@ export const NotesView: React.FC = () => {
   const [activeNote, setActiveNote] = useState(notes[0]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 h-full" style={{ minHeight: "420px" }}>
-      {/* Notes Sidebar */}
-      <div
-        className="p-4 rounded-lg space-y-3"
-        style={{
-          backgroundColor: "var(--window-card)",
-          border: "1.5px solid var(--window-border-light)",
-        }}
-      >
-        <div className="flex items-center justify-between mb-1">
-          <span
-            className="text-sm font-pixel-heading flex items-center gap-2"
-            style={{ color: "var(--accent-sage)" }}
-          >
-            <span>📓</span> Notes ({notes.length})
-          </span>
-          <button className="pixel-button text-xs py-1.5 px-3">
-            + New
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 min-h-[420px]">
+      {/* Sidebar: Notes Navigation */}
+      <div className="world-panel p-4 bg-white space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="flex items-center gap-2 text-slate-800">
+            <NotesIcon size={18} className="text-amber-800" />
+            <span className="font-heading font-bold text-sm">
+              Writing Studio ({notes.length})
+            </span>
+          </div>
+          <button className="world-button text-xs py-1.5 px-3">
+            <PlusIcon size={14} />
+            <span>New Note</span>
           </button>
         </div>
 
         <div className="space-y-2">
-          {notes.map((note) => (
-            <div
-              key={note.id}
-              onClick={() => setActiveNote(note)}
-              className="p-3 rounded-lg cursor-pointer transition-all"
-              style={{
-                backgroundColor:
-                  activeNote.id === note.id
-                    ? "var(--accent-sage-bg)"
-                    : "var(--window-bg)",
-                border: `1.5px solid ${
-                  activeNote.id === note.id
-                    ? "var(--accent-sage)"
-                    : "var(--window-border-light)"
-                }`,
-              }}
-              onMouseEnter={(e) => {
-                if (activeNote.id !== note.id) e.currentTarget.style.borderColor = "var(--window-border)";
-              }}
-              onMouseLeave={(e) => {
-                if (activeNote.id !== note.id) e.currentTarget.style.borderColor = "var(--window-border-light)";
-              }}
-            >
+          {notes.map((note) => {
+            const isSelected = activeNote.id === note.id;
+
+            return (
               <div
-                className="text-sm font-medium mb-1"
-                style={{ color: "var(--window-text-primary)" }}
+                key={note.id}
+                onClick={() => setActiveNote(note)}
+                className={`p-3.5 rounded-xl cursor-pointer transition-all duration-150 border ${
+                  isSelected
+                    ? "bg-amber-50/80 border-amber-600 shadow-xs"
+                    : "bg-slate-50/50 border-slate-200 hover:border-slate-300"
+                }`}
               >
-                {note.title}
+                <h4 className="text-xs font-heading font-semibold text-slate-900 mb-1">
+                  {note.title}
+                </h4>
+                <div className="flex items-center justify-between text-[11px] text-slate-400 font-body">
+                  <span>{note.date}</span>
+                  <div className="flex gap-1">
+                    {note.tags.map((t) => (
+                      <span key={t} className="px-1.5 py-0.5 rounded bg-amber-100/70 text-amber-900 font-medium">
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span style={{ color: "var(--window-text-faint)" }}>
-                  {note.date}
-                </span>
-                <span style={{ color: "var(--accent-amber)" }}>
-                  {note.tags.map((t) => `#${t}`).join(" ")}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Editor Pane — notebook/paper feel */}
-      <div
-        className="md:col-span-2 p-5 rounded-lg flex flex-col space-y-4"
-        style={{
-          backgroundColor: "var(--window-bg-subtle)",
-          border: "1.5px solid var(--window-border-light)",
-          /* Subtle lined-paper effect */
-          backgroundImage:
-            "repeating-linear-gradient(transparent, transparent 31px, var(--window-border-light) 31px, var(--window-border-light) 32px)",
-          backgroundSize: "100% 32px",
-          backgroundPositionY: "80px",
-        }}
-      >
-        {/* Title */}
-        <input
-          type="text"
-          value={activeNote.title}
-          readOnly
-          className="text-lg font-medium bg-transparent pb-2 focus:outline-none"
-          style={{
-            color: "var(--window-text-primary)",
-            borderBottom: "2px solid var(--window-border-light)",
-            fontFamily: "var(--font-body)",
-          }}
-        />
+      {/* Editor Main Canvas */}
+      <div className="md:col-span-2 world-panel p-6 bg-white border-l-4 border-l-amber-700 flex flex-col justify-between">
+        <div className="space-y-4">
+          <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 className="text-lg font-heading font-bold text-slate-900">
+                {activeNote.title}
+              </h3>
+              <p className="text-xs text-slate-400 font-body">
+                Last modified: {activeNote.date}
+              </p>
+            </div>
+            <div className="flex gap-1.5">
+              {activeNote.tags.map((t) => (
+                <span key={t} className="world-badge world-badge-neutral text-xs">
+                  #{t}
+                </span>
+              ))}
+            </div>
+          </div>
 
-        {/* Metadata */}
-        <div className="flex items-center gap-3 text-sm">
-          <span style={{ color: "var(--window-text-faint)" }}>
-            {activeNote.date}
-          </span>
-          <span style={{ color: "var(--window-border)" }}>·</span>
-          <div className="flex gap-1.5">
-            {activeNote.tags.map((tag) => (
-              <span
-                key={tag}
-                className="pixel-badge pixel-badge-neutral"
-                style={{ fontSize: "11px" }}
-              >
-                #{tag}
-              </span>
-            ))}
+          <div className="prose prose-slate max-w-none text-sm text-slate-700 font-body leading-relaxed whitespace-pre-wrap p-4 bg-amber-50/40 rounded-xl border border-amber-100">
+            {activeNote.content}
           </div>
         </div>
 
-        {/* Content Area */}
-        <textarea
-          value={activeNote.content}
-          readOnly
-          className="flex-1 w-full p-4 rounded-lg text-sm leading-relaxed resize-none focus:outline-none"
-          style={{
-            backgroundColor: "transparent",
-            color: "var(--window-text-primary)",
-            border: "none",
-            fontFamily: "var(--font-body)",
-            lineHeight: "32px",
-            minHeight: "240px",
-          }}
-        />
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-body">
+          <span>Writing Studio • Auto-saved locally</span>
+          <span className="text-emerald-700 font-medium flex items-center gap-1">
+            <SparklesIcon size={14} /> Linked to Concept Graph
+          </span>
+        </div>
       </div>
     </div>
   );

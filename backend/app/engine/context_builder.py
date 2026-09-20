@@ -141,7 +141,9 @@ class ContextBuilderService:
 
         # 4. Relevant Material (RAG)
         try:
-            search_query = f"{target_concept_name} {user_message}"
+            from app.utils.query_cleaner import build_clean_search_query
+
+            search_query = build_clean_search_query(target_concept_name, user_message)
             retrieval_results = await self.retrieval_service.search_semantic(
                 query=search_query,
                 learner_id=learner_id,

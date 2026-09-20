@@ -1,7 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { PixelEnvironment, NavTab } from "./components/PixelEnvironment";
 import { PixelWindow } from "./components/PixelWindow";
 import { PixelDock, SystemStatus } from "./components/PixelDock";
+import {
+  HomeIcon,
+  StudyIcon,
+  LibraryIcon,
+  KnowledgeIcon,
+  AssessmentIcon,
+  NotesIcon,
+  LearnerIcon,
+} from "./components/WorldIcons";
 
 import { HomeView } from "./components/views/HomeView";
 import { LearnChatView } from "./components/views/LearnChatView";
@@ -21,49 +30,49 @@ const INITIAL_STATUS: SystemStatus = {
 
 const MODULE_META: Record<
   NavTab,
-  { title: string; subtitle: string; icon: string; themeAccent: string }
+  { title: string; subtitle: string; icon: React.ReactNode; themeAccent: string }
 > = {
   home: {
     title: "Central Hearth",
-    subtitle: "Your Personal Learning Sanctuary",
-    icon: "🏠",
+    subtitle: "Your Personal Learning World & Daily Sanctuary",
+    icon: <HomeIcon size={20} />,
     themeAccent: "#70b37b",
   },
   learn: {
     title: "Study Cottage",
-    subtitle: "AI-Guided Learning & Exploration",
-    icon: "💬",
-    themeAccent: "#c4943c",
+    subtitle: "AI-Guided Learning & Interactive Tutor Room",
+    icon: <StudyIcon size={20} />,
+    themeAccent: "#3a684a",
   },
   knowledge: {
     title: "Concept Observatory",
     subtitle: "Knowledge Graph & Prerequisite Trees",
-    icon: "🕸️",
-    themeAccent: "#5a9cb5",
+    icon: <KnowledgeIcon size={20} />,
+    themeAccent: "#427890",
   },
   assessments: {
-    title: "Shrine of Mastery",
-    subtitle: "Quizzes, Diagnostics & Examinations",
-    icon: "📝",
-    themeAccent: "#c4943c",
+    title: "Assessment Pavilion",
+    subtitle: "Diagnostics & Mastery Quizzes",
+    icon: <AssessmentIcon size={20} />,
+    themeAccent: "#b8822c",
   },
   notes: {
-    title: "Writing Gazebo",
+    title: "Writing Studio",
     subtitle: "Personal Study Journal & Notes",
-    icon: "📓",
-    themeAccent: "#7aa07e",
+    icon: <NotesIcon size={20} />,
+    themeAccent: "#785a3c",
   },
   library: {
     title: "Archive Library",
-    subtitle: "Study Materials & Document Vault",
-    icon: "📚",
-    themeAccent: "#8b6b8a",
+    subtitle: "Study Materials & Semantic Vault",
+    icon: <LibraryIcon size={20} />,
+    themeAccent: "#b85b40",
   },
   learner_state: {
-    title: "Learning Garden",
-    subtitle: "Multi-Dimensional Knowledge State",
-    icon: "🌱",
-    themeAccent: "#5a9a8a",
+    title: "Learner Garden",
+    subtitle: "Multi-Dimensional Mastery & Memory Growth",
+    icon: <LearnerIcon size={20} />,
+    themeAccent: "#3a684a",
   },
 };
 
@@ -165,13 +174,13 @@ function App() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-slate-900">
-      {/* 1. Full-screen Pixel Nature World Landscape */}
+      {/* 1. Layer A: Illustrated Personal Learning World */}
       <PixelEnvironment
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}
       />
 
-      {/* 2. Cozy Room Window (When a building or tab is selected) */}
+      {/* 2. Layer B: Software Window (When a destination or tab is active) */}
       {activeTab && meta && (
         <PixelWindow
           title={meta.title}
@@ -185,7 +194,7 @@ function App() {
         </PixelWindow>
       )}
 
-      {/* 3. Bottom Quick Navigation Dock */}
+      {/* 3. Bottom Desktop Application Launcher Shelf */}
       <PixelDock
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}

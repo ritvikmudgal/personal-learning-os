@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+import {
+  KnowledgeIcon,
+  BrainIcon,
+  SparklesIcon,
+  ChevronRightIcon,
+} from "../WorldIcons";
 
 interface ConceptNode {
   id: string;
@@ -17,14 +23,14 @@ const SAMPLE_NODES: ConceptNode[] = [
 ];
 
 const getMasteryColor = (mastery: number) => {
-  if (mastery >= 80) return "var(--accent-moss)";
-  if (mastery >= 60) return "var(--accent-amber)";
-  if (mastery >= 40) return "var(--accent-sky)";
-  return "var(--accent-coral)";
+  if (mastery >= 80) return "#3a684a";
+  if (mastery >= 60) return "#b8822c";
+  if (mastery >= 40) return "#427890";
+  return "#b85b40";
 };
 
 const getMasteryLabel = (mastery: number) => {
-  if (mastery >= 80) return "Strong";
+  if (mastery >= 80) return "Mastered";
   if (mastery >= 60) return "Growing";
   if (mastery >= 40) return "Developing";
   return "Needs attention";
@@ -35,116 +41,93 @@ export const KnowledgeGraphView: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<ConceptNode>(SAMPLE_NODES[0]);
 
   return (
-    <div className="space-y-5">
-      {/* Controls Bar */}
-      <div
-        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg gap-3"
-        style={{
-          backgroundColor: "var(--accent-sky-bg)",
-          border: "1.5px solid var(--accent-sky)",
-        }}
-      >
-        <div className="flex items-center gap-3 text-sm">
-          <span style={{ color: "var(--window-text-muted)" }}>Traversal:</span>
-          <div className="flex gap-1.5">
+    <div className="space-y-6">
+      {/* Observatory Controls Header */}
+      <div className="world-panel p-4 bg-gradient-to-r from-sky-50/90 via-sky-100/40 to-sky-50/90 border-l-4 border-l-sky-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-sky-900 text-sky-100 flex items-center justify-center">
+            <KnowledgeIcon size={20} />
+          </div>
+          <div>
+            <h2 className="text-base font-heading font-bold text-slate-900">
+              Concept Observatory & DAG Traversal
+            </h2>
+            <p className="text-xs text-slate-600 font-body">
+              Prerequisite graph network, cycle detection, and concept node inspection
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-heading font-medium text-slate-600">Traversal:</span>
+          <div className="flex gap-1 bg-white p-1 rounded-lg border border-slate-200">
             {(["dfs", "bfs"] as const).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setTraversalMode(mode)}
-                className="px-3 py-1.5 rounded-md text-xs font-pixel-heading transition-all"
-                style={{
-                  backgroundColor:
-                    traversalMode === mode
-                      ? "var(--accent-sky)"
-                      : "var(--window-bg)",
-                  color:
-                    traversalMode === mode
-                      ? "#ffffff"
-                      : "var(--window-text-muted)",
-                  border: `1px solid ${
-                    traversalMode === mode
-                      ? "var(--accent-sky)"
-                      : "var(--window-border-light)"
-                  }`,
-                }}
+                className={`px-3 py-1 rounded-md text-xs font-heading font-medium transition-all ${
+                  traversalMode === mode
+                    ? "bg-sky-800 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
               >
-                {mode === "dfs" ? "Depth-First" : "Breadth-First"}
+                {mode === "dfs" ? "Depth-First (DFS)" : "Breadth-First (BFS)"}
               </button>
             ))}
           </div>
+          <span className="world-badge world-badge-ok text-xs">
+            Cycle Free
+          </span>
         </div>
-
-        <span
-          className="pixel-badge pixel-badge-ok"
-        >
-          Cycle Detection Active
-        </span>
       </div>
 
-      {/* Main Grid — Concept nodes + Inspector */}
+      {/* Main Grid — Concept Nodes + Inspector */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Concepts List */}
         <div className="md:col-span-2 space-y-3">
-          <h3
-            className="text-sm font-pixel-heading px-1 flex items-center gap-2"
-            style={{ color: "var(--window-text-muted)" }}
-          >
-            <span>🌳</span> Knowledge Tree ({SAMPLE_NODES.length} concepts)
+          <h3 className="text-xs font-heading font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+            <BrainIcon size={16} className="text-sky-700" />
+            <span>Knowledge Concept Nodes ({SAMPLE_NODES.length})</span>
           </h3>
+
           <div className="space-y-2">
             {SAMPLE_NODES.map((node) => {
               const isSelected = selectedNode.id === node.id;
               const masteryColor = getMasteryColor(node.mastery);
+
               return (
                 <div
                   key={node.id}
                   onClick={() => setSelectedNode(node)}
-                  className="p-4 rounded-lg cursor-pointer transition-all flex items-center justify-between"
-                  style={{
-                    backgroundColor: isSelected
-                      ? "var(--accent-sky-bg)"
-                      : "var(--window-card)",
-                    border: `1.5px solid ${
-                      isSelected
-                        ? "var(--accent-sky)"
-                        : "var(--window-border-light)"
-                    }`,
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isSelected) e.currentTarget.style.borderColor = "var(--window-border)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isSelected) e.currentTarget.style.borderColor = "var(--window-border-light)";
-                  }}
+                  className={`world-panel p-4 bg-white cursor-pointer transition-all duration-150 flex items-center justify-between ${
+                    isSelected ? "border-sky-600 ring-2 ring-sky-600/10 shadow-sm" : "hover:border-slate-300"
+                  }`}
                 >
                   <div>
-                    <div
-                      className="text-sm font-medium mb-1"
-                      style={{ color: "var(--window-text-primary)" }}
-                    >
+                    <h4 className="text-sm font-heading font-semibold text-slate-900 mb-0.5">
                       {node.title}
-                    </div>
-                    <div className="text-xs" style={{ color: "var(--window-text-muted)" }}>
-                      {node.category}
+                    </h4>
+                    <p className="text-xs text-slate-500 font-body">
+                      Category: {node.category}
                       {node.prereqs.length > 0 && (
                         <span> · Requires: {node.prereqs.join(", ")}</span>
                       )}
-                    </div>
+                    </p>
                   </div>
-                  
-                  {/* Mastery indicator — colored dot + label instead of progress bar */}
-                  <div className="flex items-center gap-2 text-right">
+
+                  {/* Mastery Indicator */}
+                  <div className="flex items-center gap-3 text-right">
                     <div>
-                      <div className="text-xs font-pixel-heading" style={{ color: masteryColor }}>
+                      <div className="text-xs font-heading font-bold" style={{ color: masteryColor }}>
                         {node.mastery}%
                       </div>
-                      <div className="text-[11px]" style={{ color: "var(--window-text-faint)" }}>
+                      <div className="text-[11px] text-slate-400 font-body">
                         {getMasteryLabel(node.mastery)}
                       </div>
                     </div>
-                    {/* Mastery ring indicator */}
+
                     <svg width="28" height="28" viewBox="0 0 28 28">
-                      <circle cx="14" cy="14" r="11" fill="none" stroke="var(--window-border-light)" strokeWidth="2.5" />
+                      <circle cx="14" cy="14" r="11" fill="none" stroke="#e2e8f0" strokeWidth="2.5" />
                       <circle
                         cx="14" cy="14" r="11"
                         fill="none"
@@ -164,62 +147,48 @@ export const KnowledgeGraphView: React.FC = () => {
           </div>
         </div>
 
-        {/* Node Inspector */}
-        <div
-          className="p-5 rounded-lg space-y-4 h-fit"
-          style={{
-            backgroundColor: "var(--window-card)",
-            border: "1.5px solid var(--window-border-light)",
-            borderLeft: "4px solid var(--accent-sky)",
-          }}
-        >
-          <h3
-            className="text-sm font-pixel-heading flex items-center gap-2"
-            style={{ color: "var(--accent-sky)" }}
-          >
-            <span>🔍</span> Concept Details
-          </h3>
-          <div>
-            <div
-              className="text-base font-medium mb-1"
-              style={{ color: "var(--window-text-primary)" }}
-            >
-              {selectedNode.title}
-            </div>
-            <div className="text-xs" style={{ color: "var(--window-text-faint)" }}>
-              {selectedNode.id}
-            </div>
+        {/* Node Inspector Drawer */}
+        <div className="world-panel p-5 bg-white border-l-4 border-l-sky-700 space-y-4 h-fit">
+          <div className="flex items-center gap-2 text-sky-800">
+            <SparklesIcon size={18} />
+            <h3 className="text-sm font-heading font-bold text-slate-900">
+              Concept Node Inspector
+            </h3>
           </div>
 
-          <div
-            className="p-4 rounded-lg space-y-3"
-            style={{
-              backgroundColor: "var(--window-bg)",
-              border: "1px solid var(--window-border-light)",
-            }}
-          >
-            <div className="flex justify-between text-sm">
-              <span style={{ color: "var(--window-text-muted)" }}>Mastery</span>
-              <span className="font-pixel-heading text-xs" style={{ color: getMasteryColor(selectedNode.mastery) }}>
+          <div>
+            <h4 className="text-base font-heading font-semibold text-slate-900">
+              {selectedNode.title}
+            </h4>
+            <p className="text-xs text-slate-400 font-body">
+              Symbol ID: {selectedNode.id}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5 font-body text-xs">
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-medium">Mastery Level</span>
+              <span className="font-semibold" style={{ color: getMasteryColor(selectedNode.mastery) }}>
                 {selectedNode.mastery}% · {getMasteryLabel(selectedNode.mastery)}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span style={{ color: "var(--window-text-muted)" }}>Prerequisites</span>
-              <span style={{ color: "var(--accent-sky)" }}>
-                {selectedNode.prereqs.length === 0 ? "Root Concept" : `${selectedNode.prereqs.length} parent(s)`}
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-medium font-body">Prerequisites</span>
+              <span className="text-sky-800 font-semibold">
+                {selectedNode.prereqs.length === 0 ? "Root Concept" : `${selectedNode.prereqs.length} required`}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span style={{ color: "var(--window-text-muted)" }}>Category</span>
-              <span style={{ color: "var(--accent-earth)" }}>
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-medium font-body">Domain Category</span>
+              <span className="text-slate-700 font-semibold">
                 {selectedNode.category}
               </span>
             </div>
           </div>
 
-          <button className="pixel-button pixel-button-primary w-full text-xs mt-2">
-            🌱 Explore Prerequisite Tree
+          <button className="world-button world-button-primary w-full text-xs py-2.5 shadow-xs">
+            <span>Explore Traversal Subtree</span>
+            <ChevronRightIcon size={14} />
           </button>
         </div>
       </div>

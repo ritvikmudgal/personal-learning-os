@@ -1,26 +1,41 @@
-"""Tutor LLM operations helper — structured operations using the abstract LLMProvider.
-
-Encapsulates LLM tasks required by the learning engine:
-- Intent classification
-- Concept name resolution
-- Teaching plan generation
-- Tailored explanation generation
-- Learner response evaluation & structured evidence candidate extraction
-"""
-
+import ast
 import json
 import re
-from typing import Any
-from app.llm.provider import LLMProvider, GenerateOptions
+from typing import Any, Type, TypeVar
+from pydantic import BaseModel
+
+from app.domain.tutor_schemas import (
+    ConceptResolutionSchema,
+    IntentClassificationSchema,
+    LearnerResponseAssessmentSchema,
+    TeachingPlanSchema,
+)
+from app.llm.provider import GenerateOptions, LLMProvider
 from app.utils.logging import get_logger
 
 logger = get_logger("llm.tutor_operations")
 
+T = TypeVar("T", bound=BaseModel)
 
-def _extract_json(text: str) -> dict[str, Any]:
-    """Helper to safely parse JSON from LLM output, handling markdown code blocks."""
+
+def parse_structured_llm_output(
+    text: str,
+    schema_cls: Type[T],
+    fallback_instance: T | None = None,
+) -> T:
+    """Safely parse LLM text into a Pydantic model with a 5-step fallback pipeline:
+
+    1. Extract JSON/Python dict substring from code blocks or raw text braces.
+    2. Try standard json.loads().
+    3. Try ast.literal_eval() for Python dict syntax (single quotes, True/False/None).
+    4. Pydantic schema validation.
+    5. Fallback instance return on failure.
+    """
+    if fallback_instance is None:
+        fallback_instance = schema_cls()
+
     text_clean = text.strip()
-    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text_clean, re.DOTALL)
+    match = re.search(r"```(?:json|python)?\s*(\{.*?\})\s*```", text_clean, re.DOTALL)
     if match:
         text_clean = match.group(1)
     else:
@@ -29,11 +44,43 @@ def _extract_json(text: str) -> dict[str, Any]:
         if first_brace != -1 and last_brace != -1:
             text_clean = text_clean[first_brace : last_brace + 1]
 
+    parsed_dict: dict[str, Any] | None = None
+
+    # Step 1: json.loads
     try:
-        return json.loads(text_clean)
+        parsed_dict = json.loads(text_clean)
+    except Exception:
+        pass
+
+    # Step 2: ast.literal_eval for single-quoted dicts
+    if parsed_dict is None:
+        try:
+            val = ast.literal_eval(text_clean)
+            if isinstance(val, dict):
+                parsed_dict = val
+        except Exception:
+            pass
+
+    # Step 3: if dictionary extraction failed completely
+    if parsed_dict is None:
+        logger.warning(
+            "Failed to parse dict from LLM output for schema %s. Snippet: %s",
+            schema_cls.__name__,
+            text[:200],
+        )
+        return fallback_instance
+
+    # Step 4: Validate against Pydantic schema
+    try:
+        return schema_cls.model_validate(parsed_dict)
     except Exception as e:
-        logger.warning("Failed to parse JSON from LLM output: %s. Raw text: %s", e, text[:200])
-        return {}
+        logger.warning(
+            "Pydantic validation failed for %s: %s. Dict: %s",
+            schema_cls.__name__,
+            e,
+            parsed_dict,
+        )
+        return fallback_instance
 
 
 class TutorLLMOperations:
@@ -43,22 +90,31 @@ class TutorLLMOperations:
         self.provider = provider
 
     async def classify_learning_intent(self, user_input: str) -> dict[str, str]:
-        """Classify user intent (e.g. teach, explain, review, struggling) and extract target concept."""
+        """Classify user intent (e.g. teach, explain, review, struggling, override) and extract target concept."""
         system_prompt = (
             "You are a learning intent classifier for a personal tutor OS. "
             "Analyze the user's message and classify the intent into one of: "
             "'teach' (wants a full guided teaching path), 'explain' (wants a quick explanation), "
-            "'struggling' (expressing confusion/mistake), or 'review' (wants to review a concept). "
+            "'struggling' (expressing confusion/mistake), 'review' (wants to review a concept), "
+            "or 'override' (wants to skip prerequisites/already knows prerequisites). "
             "Also extract the target concept name. "
             "Return valid JSON only in this format: "
-            '{"intent": "teach|explain|struggling|review", "target_concept": "Concept Name"}'
+            '{"intent": "teach|explain|struggling|review|override", "target_concept": "Concept Name"}'
         )
         opts = GenerateOptions(temperature=0.1, max_tokens=150)
         resp = await self.provider.generate(prompt=user_input, system_prompt=system_prompt, options=opts)
-        parsed = _extract_json(resp.text)
-        intent = parsed.get("intent", "teach")
-        target_concept = parsed.get("target_concept", user_input.strip())
-        return {"intent": intent, "target_concept": target_concept}
+        
+        parsed = parse_structured_llm_output(
+            resp.text,
+            IntentClassificationSchema,
+            fallback_instance=IntentClassificationSchema(intent="teach", target_concept=user_input.strip()),
+        )
+        
+        target = parsed.target_concept.strip() if parsed.target_concept else user_input.strip()
+        if target.lower() in ("none", "null", "undefined", "n/a"):
+            target = user_input.strip()
+
+        return {"intent": parsed.intent, "target_concept": target}
 
     async def resolve_concept_name(self, raw_concept: str, available_concepts: list[dict]) -> dict[str, Any]:
         """Match raw concept string against existing graph concepts or suggest new concept details."""
@@ -76,11 +132,21 @@ class TutorLLMOperations:
             system_prompt=system_prompt,
             options=opts,
         )
-        parsed = _extract_json(resp.text)
+        
+        parsed = parse_structured_llm_output(
+            resp.text,
+            ConceptResolutionSchema,
+            fallback_instance=ConceptResolutionSchema(matched_id=None, matched_name=raw_concept, is_new=True),
+        )
+        
+        matched_name = parsed.matched_name.strip() if parsed.matched_name else raw_concept
+        if matched_name.lower() in ("none", "null", "undefined", "n/a"):
+            matched_name = raw_concept
+
         return {
-            "matched_id": parsed.get("matched_id"),
-            "matched_name": parsed.get("matched_name") or raw_concept,
-            "is_new": parsed.get("is_new", True if parsed.get("matched_id") is None else False),
+            "matched_id": parsed.matched_id,
+            "matched_name": matched_name,
+            "is_new": parsed.is_new if parsed.matched_id is None else False,
         }
 
     async def generate_teaching_plan(
@@ -99,8 +165,14 @@ class TutorLLMOperations:
         )
         opts = GenerateOptions(temperature=0.3, max_tokens=250)
         resp = await self.provider.generate(prompt=context_str, system_prompt=system_prompt, options=opts)
-        parsed = _extract_json(resp.text)
-        steps = parsed.get("steps", [])
+        
+        parsed = parse_structured_llm_output(
+            resp.text,
+            TeachingPlanSchema,
+            fallback_instance=TeachingPlanSchema(steps=[]),
+        )
+        
+        steps = [s for s in parsed.steps if isinstance(s, str) and s.strip()]
         if not steps:
             if weak_prereqs:
                 steps = [f"Review foundation: {', '.join(weak_prereqs)}", f"Introduce core ideas of {target_concept}", f"Practice and verify {target_concept}"]
@@ -127,6 +199,52 @@ class TutorLLMOperations:
         resp = await self.provider.generate(prompt=prompt, system_prompt=system_prompt, options=opts)
         return resp.text.strip()
 
+    def deterministic_concept_resolution(self, raw_concept: str, available_concepts: list[dict]) -> dict[str, Any] | None:
+        """Fast Python-side exact/substring matcher against Concept Graph without calling LLM."""
+        raw_clean = raw_concept.strip().lower()
+        if not raw_clean or len(raw_clean) < 2:
+            return None
+
+        # Sort concepts by name length descending so longer, more specific concepts match first
+        sorted_concepts = sorted(available_concepts, key=lambda c: len(c.get("name", "")), reverse=True)
+
+        # 1. Exact match
+        for c in sorted_concepts:
+            c_name = c["name"].strip().lower()
+            if c_name == raw_clean:
+                return {"matched_id": c["id"], "matched_name": c["name"], "is_new": False}
+
+        # 2. Word boundary or substring match (longer concepts checked first)
+        for c in sorted_concepts:
+            c_name = c["name"].strip().lower()
+            if len(c_name) >= 3 and (re.search(rf"\b{re.escape(c_name)}\b", raw_clean) or c_name in raw_clean):
+                return {"matched_id": c["id"], "matched_name": c["name"], "is_new": False}
+
+        return None
+
+    async def stream_explanation(
+        self,
+        formatted_context: str,
+        strategy: str = "direct",
+    ):
+        """Stream explanation token by token for low latency."""
+        system_prompt = (
+            "You are a warm, encouraging personal AI study tutor inside a serene learning sanctuary. "
+            "Your tone is calm, clear, insightful, and pedagogical (never overly formal, never generic bot-speak). "
+            "Use the provided learner context (prerequisites, misconceptions, past knowledge, uploaded materials) to deliver your explanation. "
+            "Keep explanations concise, focused, structured, readable, and engaging (roughly 300 to 500 words). "
+            "End with a thoughtful follow-up question to check understanding."
+        )
+        prompt = f"Teaching Strategy: {strategy}\n\nContext:\n{formatted_context}\n\nPlease explain the concept to the learner."
+        opts = GenerateOptions(temperature=0.5, max_tokens=500)
+
+        if hasattr(self.provider, "generate_stream"):
+            async for token in self.provider.generate_stream(prompt=prompt, system_prompt=system_prompt, options=opts):
+                yield token
+        else:
+            resp = await self.provider.generate(prompt=prompt, system_prompt=system_prompt, options=opts)
+            yield resp.text.strip()
+
     async def evaluate_learner_response(
         self,
         learner_response: str,
@@ -145,14 +263,25 @@ class TutorLLMOperations:
         prompt = f"Concept: {current_concept}\nExpected Context: {expected_context}\nLearner Response: {learner_response}"
         opts = GenerateOptions(temperature=0.2, max_tokens=250)
         resp = await self.provider.generate(prompt=prompt, system_prompt=system_prompt, options=opts)
-        parsed = _extract_json(resp.text)
         
-        quality = float(parsed.get("result_quality", 0.7))
-        quality = max(0.0, min(1.0, quality))
+        parsed = parse_structured_llm_output(
+            resp.text,
+            LearnerResponseAssessmentSchema,
+            fallback_instance=LearnerResponseAssessmentSchema(),
+        )
         
+        quality = max(0.0, min(1.0, float(parsed.result_quality)))
+        misc = parsed.misconception_detected
+        if isinstance(misc, str):
+            misc = misc.strip()
+            if misc.lower() in ("none", "null", "undefined", "n/a", ""):
+                misc = None
+
         return {
             "result_quality": quality,
-            "is_sufficient": bool(parsed.get("is_sufficient", quality >= 0.6)),
-            "misconception_detected": parsed.get("misconception_detected"),
-            "feedback": parsed.get("feedback", "Evaluation completed."),
+            "is_sufficient": bool(parsed.is_sufficient),
+            "misconception_detected": misc,
+            "feedback": parsed.feedback or "Evaluation completed.",
         }
+
+

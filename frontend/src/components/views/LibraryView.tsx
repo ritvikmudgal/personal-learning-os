@@ -1,4 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import {
+  LibraryIcon,
+  UploadIcon,
+  SearchIcon,
+  BookOpenIcon,
+  TrashIcon,
+  SparklesIcon,
+} from "../WorldIcons";
 
 const API_BASE = "http://127.0.0.1:8000/api";
 
@@ -61,7 +69,7 @@ export const LibraryView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  
+
   // Inspection & search state
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialDetail | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -222,46 +230,19 @@ export const LibraryView: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "COMPLETED":
-        return "pixel-badge pixel-badge-ok";
-      case "PROCESSING":
-        return "pixel-badge pixel-badge-warning";
-      case "FAILED":
-        return "pixel-badge pixel-badge-error";
-      default:
-        return "pixel-badge pixel-badge-neutral";
-    }
-  };
-
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case "pdf": return "📕";
-      case "md": return "📝";
-      default: return "📄";
-    }
-  };
-
   return (
-    <div className="space-y-5">
-      {/* Header & Upload */}
-      <div
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-lg gap-4"
-        style={{
-          backgroundColor: "var(--accent-plum-bg)",
-          border: "1.5px solid var(--accent-plum)",
-        }}
-      >
+    <div className="space-y-6">
+      {/* Top Banner & Upload Control */}
+      <div className="world-panel p-5 bg-gradient-to-r from-amber-50/90 via-amber-100/40 to-amber-50/90 border-l-4 border-l-amber-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2
-            className="text-base font-pixel-heading flex items-center gap-2 mb-1"
-            style={{ color: "var(--window-text-primary)" }}
-          >
-            <span>📚</span> Archive Library
-          </h2>
-          <p className="text-sm" style={{ color: "var(--window-text-muted)" }}>
-            Upload study materials. Documents are chunked, vectorized, and linked to your concept graph.
+          <div className="flex items-center gap-2 text-amber-900 mb-1">
+            <LibraryIcon size={18} />
+            <h2 className="text-base font-heading font-bold text-slate-900">
+              Archive Library & Knowledge Vault
+            </h2>
+          </div>
+          <p className="text-xs text-slate-600 font-body max-w-xl">
+            Upload PDFs, Markdown files, or study notes. Documents are chunked, vectorized, and linked to your concept graph.
           </p>
         </div>
 
@@ -277,269 +258,160 @@ export const LibraryView: React.FC = () => {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="pixel-button pixel-button-primary flex items-center gap-2 whitespace-nowrap"
+            className="world-button world-button-primary px-4 py-2.5 shadow-xs"
           >
-            {uploading ? (
-              <>
-                <span className="animate-pulse">⏳</span> Ingesting...
-              </>
-            ) : (
-              <>
-                <span>+</span> Upload Document
-              </>
-            )}
+            <UploadIcon size={16} />
+            <span>{uploading ? "Ingesting..." : "Upload Document"}</span>
           </button>
         </div>
       </div>
 
       {uploadError && (
-        <div
-          className="p-4 rounded-lg text-sm flex items-center gap-2"
-          style={{
-            backgroundColor: "var(--status-error-bg)",
-            border: "1px solid var(--status-error)",
-            color: "var(--accent-coral)",
-          }}
-        >
-          <span>⚠️</span> {uploadError}
+        <div className="world-panel p-4 bg-red-50 text-red-800 border-red-200 text-xs font-body">
+          ⚠️ {uploadError}
         </div>
       )}
 
-      {/* Semantic Search */}
-      <div
-        className="p-5 rounded-lg space-y-4"
-        style={{
-          backgroundColor: "var(--window-card)",
-          border: "1.5px solid var(--window-border-light)",
-        }}
-      >
-        <form onSubmit={handleSearch} className="flex gap-3">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search your library — e.g. 'vector spaces', 'neural networks'..."
-            className="pixel-input"
-            style={{ flex: 1 }}
-          />
-          <button
-            type="submit"
-            disabled={isSearching}
-            className="pixel-button whitespace-nowrap"
-          >
-            {isSearching ? "Searching..." : "🔍 Search"}
-          </button>
-        </form>
+      {/* Semantic Search Bar */}
+      <form onSubmit={handleSearch} className="world-panel p-3 bg-white flex items-center gap-2">
+        <SearchIcon size={18} className="text-slate-400 ml-2" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Semantic Search across all library chunks..."
+          className="flex-1 bg-transparent border-none outline-none text-sm text-slate-800 font-body placeholder:italic placeholder:text-slate-400"
+        />
+        <button
+          type="submit"
+          disabled={isSearching || !searchQuery.trim()}
+          className="world-button world-button-warm px-4 py-1.5 text-xs font-medium"
+        >
+          <span>{isSearching ? "Searching..." : "Search"}</span>
+        </button>
+      </form>
 
-        {searchResults.length > 0 && (
-          <div className="space-y-3 pt-3" style={{ borderTop: "1px solid var(--window-border-light)" }}>
-            <div className="text-xs font-pixel-heading" style={{ color: "var(--accent-plum)" }}>
-              Found {searchResults.length} relevant passages
-            </div>
-            {searchResults.map((res, i) => (
-              <div
-                key={i}
-                className="p-4 rounded-lg space-y-2"
-                style={{
-                  backgroundColor: "var(--window-bg)",
-                  border: "1px solid var(--window-border-light)",
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium" style={{ color: "var(--accent-plum)" }}>
-                    📖 {res.material_title}
-                    {res.page_number ? ` — Page ${res.page_number}` : ""}
-                  </span>
-                  <span className="pixel-badge pixel-badge-info">
-                    {(res.similarity_score * 100).toFixed(1)}% match
+      {/* Semantic Search Results */}
+      {searchResults.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-xs font-heading font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+            <SparklesIcon size={14} className="text-amber-600" />
+            <span>Semantic Search Results ({searchResults.length})</span>
+          </h3>
+
+          <div className="space-y-2">
+            {searchResults.map((res, idx) => (
+              <div key={idx} className="world-panel p-4 bg-white border-l-4 border-l-amber-600 space-y-2">
+                <div className="flex items-center justify-between text-xs font-heading">
+                  <span className="font-semibold text-slate-800">{res.material_title} (Chunk #{res.chunk_index})</span>
+                  <span className="world-badge world-badge-neutral text-[11px]">
+                    Score: {(res.similarity_score * 100).toFixed(1)}%
                   </span>
                 </div>
-                {res.section_header && (
-                  <div className="text-xs" style={{ color: "var(--window-text-muted)" }}>
-                    Section: {res.section_header}
-                  </div>
-                )}
-                <p
-                  className="text-sm leading-relaxed p-3 rounded"
-                  style={{
-                    color: "var(--window-text-secondary)",
-                    backgroundColor: "var(--window-bg-subtle)",
-                    border: "1px solid var(--window-border-light)",
-                    fontStyle: "italic",
-                  }}
-                >
-                  "{res.clean_content}"
+                <p className="text-xs font-body text-slate-700 leading-relaxed bg-amber-50/50 p-2.5 rounded-md border border-amber-100">
+                  {res.clean_content}
                 </p>
               </div>
             ))}
           </div>
-        )}
-      </div>
-
-      {/* Material List */}
-      <div className="space-y-3">
-        <div
-          className="text-sm font-pixel-heading px-1"
-          style={{ color: "var(--window-text-muted)" }}
-        >
-          Documents ({materials.length})
         </div>
+      )}
+
+      {/* Material Grid / Document Cards */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-heading font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <BookOpenIcon size={14} className="text-emerald-700" />
+          <span>Library Documents ({materials.length})</span>
+        </h3>
 
         {loading ? (
-          <div className="pixel-empty-state" style={{ padding: "40px" }}>
-            <div className="pixel-empty-state-icon">📚</div>
-            <div className="pixel-empty-state-desc">Loading archive...</div>
+          <div className="world-panel p-8 text-center text-xs text-slate-500 font-body">
+            Loading archive documents...
           </div>
         ) : materials.length === 0 ? (
-          <div className="pixel-empty-state">
-            <div className="pixel-empty-state-icon">📖</div>
-            <div className="pixel-empty-state-title">Your archive is empty</div>
-            <div className="pixel-empty-state-desc">
-              Upload PDF, TXT, or Markdown files to build your personal knowledge library.
-            </div>
+          <div className="world-empty-state">
+            <LibraryIcon size={36} className="world-empty-state-icon" />
+            <h4 className="world-empty-state-title">No documents in archive</h4>
+            <p className="world-empty-state-desc">
+              Upload study PDFs or markdown files to populate your knowledge vault.
+            </p>
           </div>
         ) : (
-          materials.map((item) => (
-            <div key={item.id} className="space-y-2">
-              {/* Document Card */}
-              <div
-                className="p-4 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all cursor-pointer"
-                style={{
-                  backgroundColor:
-                    selectedMaterial?.id === item.id
-                      ? "var(--accent-plum-bg)"
-                      : "var(--window-card)",
-                  border: `1.5px solid ${
-                    selectedMaterial?.id === item.id
-                      ? "var(--accent-plum)"
-                      : "var(--window-border-light)"
-                  }`,
-                }}
-                onClick={() => handleInspect(item.id)}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{getFileIcon(item.file_type)}</span>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium" style={{ color: "var(--window-text-primary)" }}>
-                        {item.title}
-                      </span>
-                      <span className={getStatusBadge(item.ingestion_status)}>
-                        {item.ingestion_status}
-                      </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {materials.map((mat) => {
+              const isSelected = selectedMaterial?.id === mat.id;
+
+              return (
+                <div
+                  key={mat.id}
+                  className={`world-panel p-4 bg-white transition-all duration-150 ${
+                    isSelected ? "border-amber-600 ring-2 ring-amber-600/10 shadow-md" : "hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-amber-100/80 text-amber-800 flex items-center justify-center font-heading text-xs font-bold uppercase">
+                        {mat.file_type || "doc"}
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-heading font-semibold text-slate-900 line-clamp-1">
+                          {mat.title}
+                        </h4>
+                        <p className="text-[11px] text-slate-500 font-body">
+                          {formatBytes(mat.file_size_bytes)} • {mat.total_chunks} chunks
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-xs" style={{ color: "var(--window-text-muted)" }}>
-                      {item.file_type.toUpperCase()} · {formatBytes(item.file_size_bytes)} · {item.total_chunks} chunks
-                      {item.page_count ? ` · ${item.page_count} pages` : ""}
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => handleInspect(mat.id)}
+                        className="world-button text-xs px-2.5 py-1"
+                      >
+                        {isSelected ? "Hide" : "Inspect"}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(mat.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-700 rounded-md transition-colors"
+                        title="Delete material"
+                      >
+                        <TrashIcon size={16} />
+                      </button>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2 self-end sm:self-auto">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleInspect(item.id); }}
-                    className="pixel-button text-xs"
-                  >
-                    {selectedMaterial?.id === item.id ? "Close" : "Inspect"}
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                    className="pixel-button text-xs"
-                    style={{ color: "var(--accent-coral)" }}
-                  >
-                    🗑
-                  </button>
-                </div>
-              </div>
+                  {/* Status Badge */}
+                  <div className="flex items-center justify-between text-xs mt-3 pt-2.5 border-t border-slate-100">
+                    <span className="world-badge world-badge-ok text-[11px]">
+                      {mat.ingestion_status}
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      {new Date(mat.uploaded_at).toLocaleDateString()}
+                    </span>
+                  </div>
 
-              {/* Inspection Drawer */}
-              {selectedMaterial?.id === item.id && (
-                <div
-                  className="p-5 rounded-lg space-y-5 ml-4 animate-fade-in"
-                  style={{
-                    backgroundColor: "var(--window-bg)",
-                    border: "1.5px solid var(--accent-plum)",
-                    borderLeft: "4px solid var(--accent-plum)",
-                  }}
-                >
-                  {/* Associated Concepts */}
-                  <div>
-                    <h4
-                      className="text-sm font-pixel-heading mb-3 flex items-center gap-2"
-                      style={{ color: "var(--accent-plum)" }}
-                    >
-                      <span>🏷️</span> Linked Concepts ({selectedMaterial.associated_concepts.length})
-                    </h4>
-                    {selectedMaterial.associated_concepts.length === 0 ? (
-                      <p className="text-sm italic" style={{ color: "var(--window-text-faint)" }}>
-                        No concepts extracted yet.
-                      </p>
-                    ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedMaterial.associated_concepts.map((c) => (
-                          <span
-                            key={c.id}
-                            className="pixel-badge pixel-badge-info"
-                          >
-                            {c.concept_name}
-                          </span>
+                  {/* Expanded Inspection Drawer */}
+                  {isSelected && selectedMaterial && (
+                    <div className="mt-4 pt-4 border-t border-slate-200 space-y-3 animate-fade-in">
+                      <h5 className="text-xs font-heading font-semibold text-slate-800 flex items-center gap-1.5">
+                        <SparklesIcon size={14} className="text-amber-600" />
+                        <span>Extracted Chunks ({selectedMaterial.chunks.length})</span>
+                      </h5>
+
+                      <div className="max-h-48 overflow-y-auto space-y-2 custom-scrollbar">
+                        {selectedMaterial.chunks.map((chk) => (
+                          <div key={chk.id} className="p-2.5 rounded bg-slate-50 border border-slate-200 text-xs font-body space-y-1">
+                            <div className="font-semibold text-slate-700">Chunk #{chk.chunk_index} ({chk.token_count} tokens)</div>
+                            <p className="text-slate-600 leading-relaxed line-clamp-3">{chk.clean_content}</p>
+                          </div>
                         ))}
                       </div>
-                    )}
-                  </div>
-
-                  {/* Chunks Preview */}
-                  <div>
-                    <h4
-                      className="text-sm font-pixel-heading mb-3 flex items-center gap-2"
-                      style={{ color: "var(--accent-plum)" }}
-                    >
-                      <span>📄</span> Document Sections ({selectedMaterial.chunks.length})
-                    </h4>
-                    <div className="max-h-64 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                      {selectedMaterial.chunks.map((ch) => (
-                        <div
-                          key={ch.id}
-                          className="p-3 rounded-lg space-y-1.5"
-                          style={{
-                            backgroundColor: "var(--window-card)",
-                            border: "1px solid var(--window-border-light)",
-                          }}
-                        >
-                          <div className="flex items-center justify-between text-xs">
-                            <span style={{ color: "var(--window-text-muted)" }}>
-                              Section {ch.chunk_index + 1}
-                              {ch.page_number ? ` · Page ${ch.page_number}` : ""}
-                            </span>
-                            <span className="text-xs" style={{ color: "var(--window-text-faint)" }}>
-                              {ch.token_count} tokens
-                              {ch.has_embedding && (
-                                <span style={{ color: "var(--status-ok)" }}> · ✓ Vectorized</span>
-                              )}
-                            </span>
-                          </div>
-                          {ch.section_header && (
-                            <div
-                              className="text-xs font-medium"
-                              style={{ color: "var(--accent-plum)" }}
-                            >
-                              {ch.section_header}
-                            </div>
-                          )}
-                          <p
-                            className="text-sm leading-relaxed line-clamp-3"
-                            style={{ color: "var(--window-text-secondary)" }}
-                          >
-                            {ch.clean_content}
-                          </p>
-                        </div>
-                      ))}
                     </div>
-                  </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

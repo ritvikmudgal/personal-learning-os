@@ -42,192 +42,186 @@ export const PixelEnvironment: React.FC<PixelEnvironmentProps> = ({
     {
       id: "home",
       name: "Central Hearth",
-      subtitle: "Sanctuary & Daily Target",
-      x: "47%",
-      y: "48%",
-      component: <CentralHearthSVG size={90} />,
+      subtitle: "Sanctuary & Daily Learning Focus",
+      x: "48%",
+      y: "49%",
+      component: <CentralHearthSVG size={110} />,
     },
     {
       id: "learn",
       name: "Study Cottage",
-      subtitle: "AI Learn & Guided Chat",
+      subtitle: "AI Learning Room & Guided Study",
       x: "22%",
-      y: "42%",
-      component: <CottageSVG size={100} />,
+      y: "43%",
+      component: <CottageSVG size={120} />,
     },
     {
       id: "knowledge",
       name: "Concept Observatory",
       subtitle: "Tree of Knowledge & Graph",
-      x: "72%",
+      x: "74%",
       y: "32%",
-      component: <TreeObservatorySVG size={104} />,
+      component: <TreeObservatorySVG size={120} />,
     },
     {
       id: "assessments",
-      name: "Shrine of Mastery",
-      subtitle: "Quizzes & Diagnostics",
+      name: "Assessment Pavilion",
+      subtitle: "Mastery Diagnostics & Quizzes",
       x: "82%",
-      y: "56%",
-      component: <ExamShrineSVG size={96} />,
+      y: "58%",
+      component: <ExamShrineSVG size={115} />,
     },
     {
       id: "notes",
-      name: "Willow Writing Gazebo",
-      subtitle: "Learner Journal & Notes",
-      x: "15%",
-      y: "65%",
-      component: <WritingGazeboSVG size={96} />,
+      name: "Writing Studio",
+      subtitle: "Notebook & Learner Journal",
+      x: "16%",
+      y: "66%",
+      component: <WritingGazeboSVG size={115} />,
     },
     {
       id: "library",
       name: "Archive Library",
-      subtitle: "Resources & Reference Vault",
-      x: "62%",
-      y: "62%",
-      component: <LibraryTowerSVG size={100} />,
+      subtitle: "Knowledge Repository & Vault",
+      x: "60%",
+      y: "63%",
+      component: <LibraryTowerSVG size={120} />,
     },
     {
       id: "learner_state",
-      name: "Crystal Monolith",
-      subtitle: "Multi-Dim Knowledge State",
+      name: "Learner Garden",
+      subtitle: "Growing Mastery & Skills State",
       x: "34%",
-      y: "30%",
-      component: <CrystalMonolithSVG size={90} />,
+      y: "31%",
+      component: <CrystalMonolithSVG size={110} />,
     },
   ];
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
       {/* ----------------------------------------------------
-         1. SKY & ATMOSPHERE
+         1. LAYER A: SKY & ATMOSPHERIC DEPTH
          ---------------------------------------------------- */}
       <div
         className="absolute inset-0 w-full h-full"
         style={{
           background:
-            "linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 70%, var(--grass-light) 100%)",
+            "linear-gradient(to bottom, #dbe9e3 0%, #cce0d6 40%, #b8d4c7 70%, #9cbdae 100%)",
         }}
       >
-        {/* Pixel Sun with Soft Glow */}
-        <div className="absolute top-8 left-16 flex items-center justify-center animate-float">
+        {/* Soft Daylight Sun */}
+        <div className="absolute top-10 left-20 animate-float" style={{ animationDuration: '6s' }}>
           <div
-            className="w-16 h-16 rounded-full pixelated"
+            className="w-20 h-20 rounded-full"
             style={{
-              backgroundColor: "#fff3b0",
-              boxShadow: "0 0 40px rgba(255, 243, 176, 0.6), 0 0 10px #ffe066",
+              background: "radial-gradient(circle, #fff7d6 0%, #fae69e 60%, rgba(255, 247, 214, 0) 100%)",
+              filter: "blur(2px)",
             }}
           />
         </div>
 
-        {/* Drifting Pixel Clouds */}
-        <div className="absolute top-10 w-full pointer-events-none">
-          <div className="absolute top-2 animate-cloud-slow flex gap-1 opacity-90">
-            <div className="w-12 h-6 bg-white rounded-t-md opacity-90" />
-            <div className="w-16 h-8 bg-white rounded-t-md -ml-4" />
-            <div className="w-10 h-5 bg-white rounded-t-md -ml-3" />
-          </div>
-
-          <div className="absolute top-14 animate-cloud-fast flex gap-1 opacity-75">
-            <div className="w-16 h-7 bg-white rounded-t-md" />
-            <div className="w-20 h-9 bg-white rounded-t-md -ml-4" />
-          </div>
+        {/* Organic Silhouetted Clouds */}
+        <div className="absolute top-8 w-full pointer-events-none">
+          <svg className="absolute top-2 left-0 w-full h-32 animate-cloud-slow opacity-85" viewBox="0 0 1200 120">
+            <path d="M50 60 Q70 40 100 45 Q130 30 170 40 Q210 35 240 55 Q260 75 220 80 Q150 85 50 80 Z" fill="#ffffff" opacity="0.85" />
+            <path d="M450 40 Q470 20 510 25 Q540 15 580 25 Q610 15 650 35 Q670 60 630 65 Q550 70 450 65 Z" fill="#ffffff" opacity="0.75" />
+            <path d="M850 50 Q870 30 910 35 Q940 25 980 35 Q1020 25 1060 45 Q1080 65 1040 70 Q960 75 850 70 Z" fill="#ffffff" opacity="0.8" />
+          </svg>
         </div>
 
-        {/* Distant Mountain Silhouettes */}
+        {/* Layered Distant Mountain Silhouettes with Atmospheric Mist */}
         <svg
-          className="absolute bottom-1/3 w-full h-40 opacity-40 pointer-events-none"
-          viewBox="0 0 1000 120"
+          className="absolute bottom-1/3 w-full h-48 opacity-45 pointer-events-none"
+          viewBox="0 0 1200 160"
           preserveAspectRatio="none"
-          style={{ shapeRendering: "crispEdges" }}
         >
-          <polygon points="0,120 120,40 240,120" fill="#3a5a40" />
-          <polygon points="180,120 340,25 500,120" fill="#2d4a35" />
-          <polygon points="450,120 580,50 700,120" fill="#3a5a40" />
-          <polygon points="650,120 800,20 950,120" fill="#2d4a35" />
-          <polygon points="880,120 960,60 1000,120" fill="#3a5a40" />
+          <path d="M0 160 L140 60 Q200 80 320 40 L480 160 Z" fill="#4d6f5c" />
+          <path d="M260 160 L440 30 Q540 70 700 20 L860 160 Z" fill="#3b5949" />
+          <path d="M680 160 L850 50 Q940 80 1060 30 L1200 160 Z" fill="#4d6f5c" />
         </svg>
+
+        {/* Distant Mist Overlay */}
+        <div
+          className="absolute bottom-1/3 w-full h-16 pointer-events-none"
+          style={{
+            background: "linear-gradient(to top, rgba(184, 212, 199, 0.7), transparent)",
+          }}
+        />
       </div>
 
       {/* ----------------------------------------------------
-         2. TERRAIN & NATURE LANDSCAPE (Grass & River)
+         2. LAYER A: TERRAIN & NATURE LANDSCAPE (Forest, Hills, River)
          ---------------------------------------------------- */}
-      <div className="absolute bottom-0 w-full h-3/4 pointer-events-none">
-        {/* Background Grass Hill */}
+      <div className="absolute bottom-0 w-full h-4/5 pointer-events-none">
+        {/* Background Forest Hill */}
+        <div
+          className="absolute bottom-0 w-full h-full"
+          style={{
+            clipPath: "ellipse(88% 65% at 50% 68%)",
+            backgroundColor: "#2e5942",
+          }}
+        />
+
+        {/* Foreground Meadow Slope */}
         <div
           className="absolute bottom-0 w-full h-5/6"
           style={{
-            clipPath: "ellipse(85% 65% at 50% 65%)",
-            backgroundColor: "var(--grass-main)",
+            clipPath: "ellipse(96% 72% at 50% 76%)",
+            backgroundColor: "#427658",
           }}
         />
 
-        {/* Foreground Meadow Hill */}
-        <div
-          className="absolute bottom-0 w-full h-4/6"
-          style={{
-            clipPath: "ellipse(95% 70% at 50% 75%)",
-            backgroundColor: "var(--grass-light)",
-          }}
-        />
-
-        {/* Winding River Stream */}
+        {/* Organic Curved River Stream & Reflections */}
         <svg
           className="absolute bottom-0 w-full h-full opacity-90"
           viewBox="0 0 1000 600"
           preserveAspectRatio="none"
-          style={{ shapeRendering: "crispEdges" }}
         >
-          {/* Riverbed/Water Flow */}
+          {/* Main River Bed */}
           <path
-            d="M 380 180 C 420 280, 520 340, 480 440 C 450 510, 360 550, 320 600 L 410 600 C 460 540, 550 490, 570 430 C 610 320, 500 250, 450 180 Z"
-            fill="var(--river-mid)"
+            d="M 390 170 C 430 260, 530 330, 480 430 C 440 510, 350 550, 310 600 L 410 600 C 460 540, 560 490, 580 430 C 630 320, 510 250, 460 170 Z"
+            fill="#366175"
           />
+          {/* Water Highlight & Ripple Flow */}
           <path
-            d="M 390 180 C 428 280, 528 340, 488 440 C 458 510, 368 550, 335 600 L 380 600 C 430 540, 520 490, 540 430 C 580 320, 485 250, 430 180 Z"
-            fill="var(--river-light)"
-            opacity="0.6"
+            d="M 400 170 C 438 260, 538 330, 488 430 C 448 510, 358 550, 325 600 L 375 600 C 425 540, 530 490, 550 430 C 600 320, 495 250, 440 170 Z"
+            fill="#528399"
+            opacity="0.65"
           />
 
-          {/* Wooden Bridge crossing the River */}
-          <rect x="475" y="360" width="60" height="24" fill="#684a38" rx="2" />
-          <rect x="475" y="360" width="60" height="4" fill="#8d5b4c" />
-          <rect x="475" y="380" width="60" height="4" fill="#8d5b4c" />
-          <rect x="470" y="356" width="6" height="32" fill="#402e23" />
-          <rect x="530" y="356" width="6" height="32" fill="#402e23" />
+          {/* Wooden Footbridge */}
+          <rect x="470" y="358" width="68" height="26" fill="#6a4c3b" rx="4" />
+          <line x1="470" y1="364" x2="538" y2="364" stroke="#805d49" strokeWidth="3" />
+          <line x1="470" y1="378" x2="538" y2="378" stroke="#805d49" strokeWidth="3" />
+          <rect x="466" y="354" width="8" height="34" rx="2" fill="#4a3425" />
+          <rect x="534" y="354" width="8" height="34" rx="2" fill="#4a3425" />
         </svg>
 
-        {/* Cobblestone Dirt Paths Connecting Buildings */}
+        {/* Winding Cobblestone Dirt Paths */}
         <svg
-          className="absolute inset-0 w-full h-full opacity-40"
+          className="absolute inset-0 w-full h-full opacity-35"
           viewBox="0 0 1000 600"
           preserveAspectRatio="none"
-          style={{ shapeRendering: "crispEdges" }}
         >
           <path
-            d="M 230 260 Q 350 280 470 300 Q 600 250 720 200"
-            stroke="#684a38"
-            strokeWidth="12"
-            strokeDasharray="6 6"
+            d="M 220 260 Q 340 280 480 300 Q 610 250 740 190"
+            stroke="#594436"
+            strokeWidth="14"
+            strokeDasharray="6 8"
             fill="none"
           />
           <path
-            d="M 470 300 L 485 365 M 520 380 Q 560 410 630 400 M 200 400 Q 300 380 470 300"
-            stroke="#684a38"
-            strokeWidth="10"
-            strokeDasharray="4 6"
+            d="M 480 300 L 490 365 M 530 380 Q 570 410 630 400 M 180 400 Q 300 380 480 300"
+            stroke="#594436"
+            strokeWidth="12"
+            strokeDasharray="5 7"
             fill="none"
           />
         </svg>
-
-        {/* Scattered Pixel Trees & Flowers in Meadow */}
-        <div className="absolute bottom-12 left-10 w-8 h-12 bg-emerald-800 rounded-t-full opacity-80" />
-        <div className="absolute bottom-20 left-28 w-10 h-16 bg-emerald-900 rounded-t-full opacity-80" />
-        <div className="absolute bottom-32 right-12 w-12 h-20 bg-emerald-800 rounded-t-full opacity-80" />
       </div>
 
       {/* ----------------------------------------------------
-         3. INTERACTIVE PIXEL BUILDINGS & OBJECTS
+         3. LAYER A: ARCHITECTURAL DESTINATIONS & LOCATIONS
          ---------------------------------------------------- */}
       <div className="absolute inset-0 w-full h-full">
         {locations.map((loc) => {
@@ -243,34 +237,33 @@ export const PixelEnvironment: React.FC<PixelEnvironmentProps> = ({
               onMouseLeave={() => setHoveredTab(null)}
               onClick={() => onSelectTab(loc.id)}
             >
-              {/* Building Container with Hover Lift & Pulse */}
+              {/* Building Container with Hover Lift */}
               <div
-                className={`transition-all duration-200 flex flex-col items-center ${
-                  isHovered ? "-translate-y-2 scale-105" : "translate-y-0"
+                className={`transition-all duration-250 flex flex-col items-center ${
+                  isHovered ? "-translate-y-2.5 scale-105" : "translate-y-0"
                 }`}
               >
-                {/* Pixel Floating Marker / Badge */}
+                {/* Location Badge */}
                 <div
-                  className={`mb-1 px-3 py-1 text-xs font-pixel-heading rounded border transition-all duration-200 shadow-md ${
+                  className={`mb-2 px-3.5 py-1 text-xs font-heading font-medium rounded-full transition-all duration-200 shadow-md flex items-center gap-1.5 ${
                     isActive
-                      ? "bg-emerald-600 text-white border-emerald-300 scale-110"
+                      ? "bg-emerald-800 text-white border border-emerald-500 scale-110 shadow-lg"
                       : isHovered
-                      ? "bg-amber-100 text-amber-950 border-amber-400 scale-105"
-                      : "bg-slate-900/80 text-emerald-200 border-emerald-800/80"
+                      ? "bg-amber-100 text-amber-950 border border-amber-400 scale-105"
+                      : "bg-slate-900/80 text-amber-100 border border-slate-700/80 backdrop-blur-sm"
                   }`}
                   style={{
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                    letterSpacing: "0.02em",
+                    letterSpacing: "0.01em",
                   }}
                 >
-                  <span className="mr-1.5">{isHovered ? "✦" : "📍"}</span>
+                  <span className="text-amber-400">{isHovered ? "✦" : "📍"}</span>
                   {loc.name}
                 </div>
 
-                {/* SVG Pixel Building Render */}
+                {/* Building SVG Render */}
                 <div
-                  className={`relative ${
-                    isHovered ? "drop-shadow-[0_8px_16px_rgba(255,255,255,0.3)]" : ""
+                  className={`relative transition-all duration-200 ${
+                    isHovered ? "filter drop-shadow-[0_12px_24px_rgba(42,34,27,0.25)]" : ""
                   }`}
                 >
                   {loc.component}
@@ -279,7 +272,7 @@ export const PixelEnvironment: React.FC<PixelEnvironmentProps> = ({
                 {/* Hover Subtitle Tooltip */}
                 {isHovered && (
                   <div
-                    className="absolute -bottom-8 whitespace-nowrap text-[11px] font-pixel-mono px-2 py-0.5 rounded bg-black/80 text-amber-200 border border-amber-500/40 pointer-events-none animate-float"
+                    className="absolute -bottom-9 whitespace-nowrap text-xs font-body px-3 py-1 rounded-md bg-slate-900/90 text-amber-100 border border-amber-400/40 shadow-xl pointer-events-none animate-fade-in"
                     style={{ zIndex: 50 }}
                   >
                     {loc.subtitle}
@@ -294,14 +287,14 @@ export const PixelEnvironment: React.FC<PixelEnvironmentProps> = ({
       {/* ----------------------------------------------------
          4. SOOTHING ENVIRONMENTAL TITLE OVERLAY
          ---------------------------------------------------- */}
-      <div className="absolute top-4 left-6 pointer-events-none z-10 flex items-center gap-3">
-        <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse pixelated border border-white" />
+      <div className="absolute top-5 left-7 pointer-events-none z-10 flex items-center gap-3">
+        <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse ring-4 ring-emerald-500/20" />
         <div>
-          <h1 className="text-sm font-pixel-heading text-slate-900 tracking-wide drop-shadow-sm">
+          <h1 className="text-sm font-heading font-bold text-slate-800 tracking-wide">
             PERSONAL LEARNING OS
           </h1>
-          <p className="text-xs font-pixel-mono text-slate-800 opacity-90">
-            Sanctuary World • Layer 2 Foundation Active
+          <p className="text-xs font-body text-slate-600 font-medium">
+            Sanctuary World
           </p>
         </div>
       </div>
